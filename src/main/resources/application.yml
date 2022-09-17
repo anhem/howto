@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: howto
+  profiles:
+    default: dev
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+info:
+  name: ${spring.application.name}
+  version: @version@
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/howtodb
+    hikari:
+      username: howto
+      password: password
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/howtodb
