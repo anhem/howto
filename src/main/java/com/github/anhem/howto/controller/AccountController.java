@@ -9,6 +9,7 @@ import com.github.anhem.howto.model.id.Id;
 import com.github.anhem.howto.model.id.Password;
 import com.github.anhem.howto.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,10 +23,12 @@ import static com.github.anhem.howto.controller.api.mapper.CreateAccountDTOMappe
 public class AccountController {
 
     private final AccountService accountService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountService accountService, PasswordEncoder passwordEncoder) {
         this.accountService = accountService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -46,7 +49,8 @@ public class AccountController {
 
     @PostMapping
     public MessageDTO createAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
-        return MessageDTO.fromId(accountService.createAccount(mapToAccount(createAccountDTO), Id.of(Password.class, createAccountDTO.getPassword())));
+        String password = passwordEncoder.encode(createAccountDTO.getPassword());
+        return MessageDTO.fromId(accountService.createAccount(mapToAccount(createAccountDTO), Id.of(Password.class, password)));
     }
 
 }

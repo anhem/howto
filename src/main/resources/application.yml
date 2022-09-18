@@ -30,12 +30,3 @@ spring:
     hikari:
       username: howto
       password: password
-
----
-
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:postgresql://localhost:5432/howtodb
