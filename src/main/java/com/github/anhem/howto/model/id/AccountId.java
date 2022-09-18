@@ -15,9 +15,4 @@ public class AccountId implements Id<Integer> {
     @NonNull
     Integer value;
 
-    public static AccountId of(int accountId) {
-        return AccountId.builder()
-                .value(accountId)
-                .build();
-    }
 }

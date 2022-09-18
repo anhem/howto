@@ -11,9 +11,4 @@ public class Password implements Id<String> {
     @NonNull
     String value;
 
-    public static Password of(String username) {
-        return Password.builder()
-                .value(username)
-                .build();
-    }
 }

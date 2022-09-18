@@ -3,6 +3,7 @@ package com.github.anhem.howto.repository;
 import com.github.anhem.howto.model.AccountPassword;
 import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.AccountPasswordId;
+import com.github.anhem.howto.model.id.Id;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -31,7 +32,7 @@ public class AccountPasswordRepository extends JdbcRepository {
 
         namedParameterJdbcTemplate.update(INSERT_PASSWORD, parameters, keyHolder, new String[]{"account_password_id"});
 
-        return AccountPasswordId.of(extractNumberId(keyHolder));
+        return Id.of(AccountPasswordId.class, extractNumberId(keyHolder));
     }
 
     public void removePassword(AccountId accountId) {

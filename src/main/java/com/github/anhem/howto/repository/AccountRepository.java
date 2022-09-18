@@ -3,6 +3,7 @@ package com.github.anhem.howto.repository;
 import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.id.AccountId;
+import com.github.anhem.howto.model.id.Id;
 import com.github.anhem.howto.model.id.Username;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -64,7 +65,7 @@ public class AccountRepository extends JdbcRepository {
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, parameters, keyHolder, new String[]{"account_id"});
 
-        return AccountId.of(extractNumberId(keyHolder));
+        return Id.of(AccountId.class, extractNumberId(keyHolder));
     }
 
 

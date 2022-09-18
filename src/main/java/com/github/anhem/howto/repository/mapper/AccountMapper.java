@@ -2,6 +2,7 @@ package com.github.anhem.howto.repository.mapper;
 
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.id.AccountId;
+import com.github.anhem.howto.model.id.Id;
 import com.github.anhem.howto.model.id.Username;
 
 import java.sql.ResultSet;
@@ -13,8 +14,8 @@ public class AccountMapper {
 
     public static Account mapToAccount(ResultSet rs) throws SQLException {
         return Account.builder()
-                .accountId(AccountId.of(rs.getInt("account_id")))
-                .username(Username.of(rs.getString("username")))
+                .accountId(Id.of(AccountId.class, rs.getInt("account_id")))
+                .username(Id.of(Username.class, rs.getString("username")))
                 .email(rs.getString("email"))
                 .firstName(rs.getString("first_name"))
                 .lastName(rs.getString("last_name"))

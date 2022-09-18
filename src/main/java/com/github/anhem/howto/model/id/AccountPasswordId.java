@@ -15,10 +15,4 @@ public class AccountPasswordId implements Id<Integer> {
     @NonNull
     Integer value;
 
-    public static AccountPasswordId of(Integer accountPasswordId) {
-        return AccountPasswordId.builder()
-                .value(accountPasswordId)
-                .build();
-    }
-
 }

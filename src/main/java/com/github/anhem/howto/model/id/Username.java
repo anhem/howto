@@ -11,9 +11,4 @@ public class Username implements Id<String> {
     @NonNull
     String value;
 
-    public static Username of(String username) {
-        return Username.builder()
-                .value(username)
-                .build();
-    }
 }
