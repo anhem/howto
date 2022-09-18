@@ -5,7 +5,6 @@ import com.github.anhem.howto.controller.api.AccountsDTO;
 import com.github.anhem.howto.controller.api.CreateAccountDTO;
 import com.github.anhem.howto.controller.api.MessageDTO;
 import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.Id;
 import com.github.anhem.howto.model.id.Password;
 import com.github.anhem.howto.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +37,19 @@ public class AccountController {
 
     @GetMapping(value = "{accountId}")
     public AccountDTO getAccount(@PathVariable int accountId) {
-        return mapToAccountDTO(accountService.getAccount(Id.of(AccountId.class, accountId)));
+        return mapToAccountDTO(accountService.getAccount(new AccountId(accountId)));
     }
 
     @DeleteMapping(value = "{accountId}")
     public MessageDTO removeAccount(@PathVariable int accountId) {
-        accountService.removeAccount(Id.of(AccountId.class, accountId));
+        accountService.removeAccount(new AccountId(accountId));
         return MessageDTO.OK;
     }
 
     @PostMapping
     public MessageDTO createAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
         String password = passwordEncoder.encode(createAccountDTO.getPassword());
-        return MessageDTO.fromId(accountService.createAccount(mapToAccount(createAccountDTO), Id.of(Password.class, password)));
+        return MessageDTO.fromId(accountService.createAccount(mapToAccount(createAccountDTO), new Password(password)));
     }
 
 }

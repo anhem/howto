@@ -5,6 +5,8 @@ import com.github.anhem.testpopulator.config.BuilderPattern;
 import com.github.anhem.testpopulator.config.PopulateConfig;
 import com.github.anhem.testpopulator.config.Strategy;
 
+import java.util.List;
+
 public class TestPopulator {
 
     public static <T> T populate(Class<T> clazz) {
@@ -12,7 +14,7 @@ public class TestPopulator {
     }
 
     private static final PopulateConfig populateConfig = PopulateConfig.builder()
-            .strategyOrder(Strategy.BUILDER)
+            .strategyOrder(List.of(Strategy.BUILDER, Strategy.CONSTRUCTOR))
             .builderPattern(BuilderPattern.LOMBOK)
             .build();
 

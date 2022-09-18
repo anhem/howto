@@ -16,8 +16,8 @@ public class AccountDTOMapper {
 
     public static AccountDTO mapToAccountDTO(Account account) {
         return AccountDTO.builder()
-                .id(account.getAccountId().getValue())
-                .username(account.getUsername().getValue())
+                .id(account.getAccountId().value())
+                .username(account.getUsername().value())
                 .email(account.getEmail())
                 .firstName(account.getFirstName())
                 .lastName(account.getLastName())

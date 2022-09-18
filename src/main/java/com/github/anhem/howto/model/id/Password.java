@@ -1,22 +1,15 @@
 package com.github.anhem.howto.model.id;
 
-import lombok.Builder;
-import lombok.NonNull;
-import lombok.Value;
-
-@Value
-public class Password implements Id<String> {
+public record Password(String value) implements Id<String> {
 
     static final String BCRYPT = "{bcrypt}";
 
-    @NonNull
-    String value;
-
-    @Builder
-    public Password(String value) {
+    public Password {
+        if (value == null) {
+            throw new NullPointerException("value is marked non-null but is null");
+        }
         if (!value.startsWith(BCRYPT)) {
             throw new RuntimeException("Password not encoded!");
         }
-        this.value = value;
     }
 }

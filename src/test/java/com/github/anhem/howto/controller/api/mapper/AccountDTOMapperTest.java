@@ -17,7 +17,7 @@ class AccountDTOMapperTest {
         AccountDTO accountDTO = mapToAccountDTO(account);
 
         assertThat(accountDTO).hasNoNullFieldsOrProperties();
-        assertThat(accountDTO.getId()).isEqualTo(account.getAccountId().getValue());
+        assertThat(accountDTO.getId()).isEqualTo(account.getAccountId().value());
     }
 
 }

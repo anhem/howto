@@ -17,7 +17,7 @@ public class MessageDTO {
 
     public static MessageDTO fromId(Id<?> id) {
         return MessageDTO.builder()
-                .message(String.valueOf(id.getValue()))
+                .message(String.valueOf(id.value()))
                 .build();
     }
 }

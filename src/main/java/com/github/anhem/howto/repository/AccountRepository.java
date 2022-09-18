@@ -3,7 +3,6 @@ package com.github.anhem.howto.repository;
 import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.Id;
 import com.github.anhem.howto.model.id.Username;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -37,7 +36,7 @@ public class AccountRepository extends JdbcRepository {
 
     public Account getAccount(AccountId accountId) {
         MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("accountId", accountId.getValue());
+                .addValue("accountId", accountId.value());
         try {
             return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT, parameters, (rs, i) -> mapToAccount(rs));
         } catch (EmptyResultDataAccessException e) {
@@ -47,7 +46,7 @@ public class AccountRepository extends JdbcRepository {
 
     public void removeAccount(AccountId accountId) {
         MapSqlParameterSource parameters = createParameters()
-                .addValue("accountId", accountId.getValue());
+                .addValue("accountId", accountId.value());
 
         namedParameterJdbcTemplate.update(DELETE_ACCOUNT, parameters);
         log.info("Removed user {}", accountId);
@@ -55,7 +54,7 @@ public class AccountRepository extends JdbcRepository {
 
     public AccountId createAccount(Account account) {
         MapSqlParameterSource parameters = createParameters()
-                .addValue("username", account.getUsername().getValue())
+                .addValue("username", account.getUsername().value())
                 .addValue("email", account.getEmail())
                 .addValue("firstName", account.getFirstName())
                 .addValue("lastName", account.getLastName())
@@ -65,13 +64,13 @@ public class AccountRepository extends JdbcRepository {
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, parameters, keyHolder, new String[]{"account_id"});
 
-        return Id.of(AccountId.class, extractNumberId(keyHolder));
+        return new AccountId(extractNumberId(keyHolder));
     }
 
 
     public boolean accountExists(Username username, String email) {
         MapSqlParameterSource params = createParameters()
-                .addValue("username", username.getValue())
+                .addValue("username", username.value())
                 .addValue("email", email);
         return namedParameterJdbcTemplate.queryForObject(ACCOUNT_EXISTS, params, Boolean.class);
     }

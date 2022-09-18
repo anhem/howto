@@ -14,33 +14,26 @@ class PasswordTest {
 
     @Test
     void nullPointerExceptionWhenValueIsNull() {
-        Assertions.assertThrows(NullPointerException.class, () -> Password.builder().build());
+
+        Assertions.assertThrows(NullPointerException.class, () -> new Password(null));
     }
 
     @Test
     void runtimeExceptionWhenValueIsEmpty() {
-        Assertions.assertThrows(RuntimeException.class, () -> Password.builder()
-                .value("")
-                .build());
+        Assertions.assertThrows(RuntimeException.class, () -> new Password(""));
     }
 
     @Test
     void runtimeExceptionWhenValueNotEncoded() {
-        Assertions.assertThrows(RuntimeException.class, () -> Password.builder()
-                .value(RAW_PASSWORD)
-                .build());
+        Assertions.assertThrows(RuntimeException.class, () -> new Password(RAW_PASSWORD));
     }
 
     @Test
     void passwordCreatedWhenValueIsEncoded() {
         String encodePassword = PASSWORD_ENCODER.encode(RAW_PASSWORD);
 
-        Password password = Password.builder()
-                .value(encodePassword)
-                .build();
+        Password password = new Password(encodePassword);
 
-        Password passwordOf = Id.of(Password.class, encodePassword);
-
-        assertThat(password).isEqualTo(passwordOf);
+        assertThat(password.value()).isNotBlank();
     }
 }
