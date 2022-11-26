@@ -1,9 +1,6 @@
 package com.github.anhem.howto.controller;
 
-import com.github.anhem.howto.controller.model.AccountDTO;
-import com.github.anhem.howto.controller.model.AccountsDTO;
-import com.github.anhem.howto.controller.model.CreateAccountDTO;
-import com.github.anhem.howto.controller.model.MessageDTO;
+import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.testutil.TestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -15,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AccountControllerIT extends TestApplication {
 
     private static final String CREATE_USER_ACCOUNT_URL = "/api/accounts/users/user";
-    private static final String GET_ACCOUNT_URL = "/api/accounts/%d";
+    private static final String GET_ACCOUNT_DETAILS_URL = "/api/accounts/details/%d";
     private static final String GET_ACCOUNTS_URL = "/api/accounts";
     public static final String DELETE_ACCOUNT_URL = "/api/accounts/%d";
 
@@ -32,9 +29,10 @@ class AccountControllerIT extends TestApplication {
 
         int accountId = Integer.parseInt(createResponse.getBody().getMessage());
 
-        ResponseEntity<AccountDTO> accountResponse = testRestTemplate.getForEntity(String.format(GET_ACCOUNT_URL, accountId), AccountDTO.class);
-        assertThat(accountResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertAccount(accountResponse.getBody(), accountId, createAccountDTO);
+        ResponseEntity<AccountDetailsDTO> accountDetailsResponse = testRestTemplate.getForEntity(String.format(GET_ACCOUNT_DETAILS_URL, accountId), AccountDetailsDTO.class);
+        assertThat(accountDetailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(accountDetailsResponse.getBody()).isNotNull();
+        assertAccount(accountDetailsResponse.getBody().getAccount(), accountId, createAccountDTO);
 
         ResponseEntity<AccountsDTO> accountsResponse = testRestTemplate.getForEntity(GET_ACCOUNTS_URL, AccountsDTO.class);
 
@@ -42,7 +40,7 @@ class AccountControllerIT extends TestApplication {
         AccountsDTO accountsDTO = accountsResponse.getBody();
         assertThat(accountsDTO).isNotNull();
         assertThat(accountsDTO.getAccountCount()).isEqualTo(accountsDTO.getAccounts().size());
-        assertThat(accountsDTO.getAccounts()).contains(accountResponse.getBody());
+        assertThat(accountsDTO.getAccounts()).contains(accountDetailsResponse.getBody().getAccount());
 
         ResponseEntity<MessageDTO> deleteResponse = deleteForEntity(String.format(DELETE_ACCOUNT_URL, accountId));
 

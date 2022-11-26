@@ -8,3 +8,5 @@ docker run --name howto-db -e POSTGRES_DB=howto-db -e POSTGRES_USER=howto -e POS
 username: admin
 password: superSecret1!
 ```
+
+http://localhost:8080/swagger-ui/index.html
