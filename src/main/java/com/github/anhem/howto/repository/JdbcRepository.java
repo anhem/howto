@@ -23,6 +23,10 @@ public abstract class JdbcRepository {
         return new MapSqlParameterSource();
     }
 
+    protected MapSqlParameterSource createParameters(String name, Object value) {
+        return createParameters().addValue(name, value);
+    }
+
     protected Integer extractNumberId(KeyHolder keyHolder) {
         return Optional.ofNullable(keyHolder.getKey())
                 .map(Number::intValue)

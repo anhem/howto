@@ -35,9 +35,7 @@ public class AccountPasswordRepository extends JdbcRepository {
     }
 
     public void removePassword(AccountId accountId) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("accountId", accountId.value());
-
+        MapSqlParameterSource parameters = createParameters("accountId", accountId.value());
         namedParameterJdbcTemplate.update(DELETE_PASSWORD, parameters);
     }
 }

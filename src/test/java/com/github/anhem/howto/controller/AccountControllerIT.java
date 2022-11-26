@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AccountControllerIT extends TestApplication {
 
-    private static final String CREATE_ACCOUNT_URL = "/api/accounts";
+    private static final String CREATE_USER_ACCOUNT_URL = "/api/accounts/users/user";
     private static final String GET_ACCOUNT_URL = "/api/accounts/%d";
     private static final String GET_ACCOUNTS_URL = "/api/accounts";
     public static final String DELETE_ACCOUNT_URL = "/api/accounts/%d";
@@ -25,7 +25,7 @@ class AccountControllerIT extends TestApplication {
                 .email("integration@test.com")
                 .build();
 
-        ResponseEntity<MessageDTO> createResponse = testRestTemplate.postForEntity(CREATE_ACCOUNT_URL, createAccountDTO, MessageDTO.class);
+        ResponseEntity<MessageDTO> createResponse = testRestTemplate.postForEntity(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class);
 
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(createResponse.getBody()).isNotNull();

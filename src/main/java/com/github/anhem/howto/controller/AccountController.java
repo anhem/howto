@@ -46,10 +46,10 @@ public class AccountController {
         return MessageDTO.OK;
     }
 
-    @PostMapping
-    public MessageDTO createAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
-        String password = passwordEncoder.encode(createAccountDTO.getPassword());
-        return MessageDTO.fromId(accountService.createAccount(mapToAccount(createAccountDTO), new Password(password)));
+    @PostMapping(value = "users/user")
+    public MessageDTO createUserAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
+        return MessageDTO.fromId(accountService.createUserAccount(mapToAccount(createAccountDTO),
+                new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
     }
 
 }

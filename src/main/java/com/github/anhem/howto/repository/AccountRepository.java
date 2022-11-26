@@ -30,14 +30,13 @@ public class AccountRepository extends JdbcRepository {
         super(namedParameterJdbcTemplate);
     }
 
-    public List<Account> getUsers() {
+    public List<Account> getAccounts() {
         return namedParameterJdbcTemplate.query(SELECT_ACCOUNTS, (rs, i) -> mapToAccount(rs));
     }
 
     public Account getAccount(AccountId accountId) {
-        MapSqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("accountId", accountId.value());
         try {
+            MapSqlParameterSource parameters = createParameters("accountId", accountId.value());
             return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT, parameters, (rs, i) -> mapToAccount(rs));
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(accountId);
@@ -45,11 +44,9 @@ public class AccountRepository extends JdbcRepository {
     }
 
     public void removeAccount(AccountId accountId) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("accountId", accountId.value());
-
+        MapSqlParameterSource parameters = createParameters("accountId", accountId.value());
         namedParameterJdbcTemplate.update(DELETE_ACCOUNT, parameters);
-        log.info("Removed user {}", accountId);
+        log.info("Removed account {}", accountId);
     }
 
     public AccountId createAccount(Account account) {
@@ -64,7 +61,9 @@ public class AccountRepository extends JdbcRepository {
 
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT, parameters, keyHolder, new String[]{"account_id"});
 
-        return new AccountId(extractNumberId(keyHolder));
+        AccountId accountId = new AccountId(extractNumberId(keyHolder));
+        log.info("Account {} created", account);
+        return accountId;
     }
 
 
@@ -74,6 +73,4 @@ public class AccountRepository extends JdbcRepository {
                 .addValue("email", email);
         return namedParameterJdbcTemplate.queryForObject(ACCOUNT_EXISTS, params, Boolean.class);
     }
-
-
 }

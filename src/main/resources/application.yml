@@ -3,6 +3,8 @@ spring:
     name: howto
   profiles:
     default: dev
+  jackson:
+    default-property-inclusion: non_null
 
 server:
   port: 8080
@@ -26,7 +28,9 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/howtodb
+    url: jdbc:postgresql://localhost:5432/howto-db
     hikari:
       username: howto
       password: password
+  flyway:
+    locations: classpath:/db/migration,classpath:/dev/db/migration
