@@ -1,9 +1,9 @@
 package com.github.anhem.howto.controller;
 
-import com.github.anhem.howto.controller.api.AccountDTO;
-import com.github.anhem.howto.controller.api.AccountsDTO;
-import com.github.anhem.howto.controller.api.CreateAccountDTO;
-import com.github.anhem.howto.controller.api.MessageDTO;
+import com.github.anhem.howto.controller.model.AccountDTO;
+import com.github.anhem.howto.controller.model.AccountsDTO;
+import com.github.anhem.howto.controller.model.CreateAccountDTO;
+import com.github.anhem.howto.controller.model.MessageDTO;
 import com.github.anhem.howto.testutil.TestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

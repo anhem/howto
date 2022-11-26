@@ -1,17 +1,15 @@
-package com.github.anhem.howto.controller.api.mapper;
+package com.github.anhem.howto.controller.mapper;
 
-import com.github.anhem.howto.controller.api.AccountDTO;
-import com.github.anhem.howto.controller.api.AccountsDTO;
+import com.github.anhem.howto.controller.model.AccountDTO;
+import com.github.anhem.howto.controller.model.AccountsDTO;
 import com.github.anhem.howto.model.Account;
 
 import java.util.List;
 
-import static com.github.anhem.howto.controller.api.mapper.AccountDTOMapper.mapToAccountDTOs;
-
 public class AccountsDTOMapper {
 
     public static AccountsDTO mapToAccountsDTO(List<Account> accounts) {
-        List<AccountDTO> accountDTOs = mapToAccountDTOs(accounts);
+        List<AccountDTO> accountDTOs = AccountDTOMapper.mapToAccountDTOs(accounts);
         return AccountsDTO.builder()
                 .accountCount(accountDTOs.size())
                 .accounts(accountDTOs)

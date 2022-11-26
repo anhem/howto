@@ -1,9 +1,9 @@
 package com.github.anhem.howto.controller;
 
-import com.github.anhem.howto.controller.api.AccountDTO;
-import com.github.anhem.howto.controller.api.AccountsDTO;
-import com.github.anhem.howto.controller.api.CreateAccountDTO;
-import com.github.anhem.howto.controller.api.MessageDTO;
+import com.github.anhem.howto.controller.model.AccountDTO;
+import com.github.anhem.howto.controller.model.AccountsDTO;
+import com.github.anhem.howto.controller.model.CreateAccountDTO;
+import com.github.anhem.howto.controller.model.MessageDTO;
 import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.Password;
 import com.github.anhem.howto.service.AccountService;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.github.anhem.howto.controller.api.mapper.AccountDTOMapper.mapToAccountDTO;
-import static com.github.anhem.howto.controller.api.mapper.AccountsDTOMapper.mapToAccountsDTO;
-import static com.github.anhem.howto.controller.api.mapper.CreateAccountDTOMapper.mapToAccount;
+import static com.github.anhem.howto.controller.mapper.AccountDTOMapper.mapToAccountDTO;
+import static com.github.anhem.howto.controller.mapper.AccountsDTOMapper.mapToAccountsDTO;
+import static com.github.anhem.howto.controller.mapper.CreateAccountDTOMapper.mapToAccount;
 
 @RestController
 @RequestMapping(value = "api/accounts")

@@ -1,4 +1,4 @@
-package com.github.anhem.howto.controller.api;
+package com.github.anhem.howto.controller.model;
 
 import lombok.Builder;
 import lombok.Value;

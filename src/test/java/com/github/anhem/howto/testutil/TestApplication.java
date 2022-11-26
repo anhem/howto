@@ -1,6 +1,6 @@
 package com.github.anhem.howto.testutil;
 
-import com.github.anhem.howto.controller.api.MessageDTO;
+import com.github.anhem.howto.controller.model.MessageDTO;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
