@@ -2,6 +2,7 @@ package com.github.anhem.howto.testutil;
 
 import com.github.anhem.howto.controller.model.AuthenticateDTO;
 import com.github.anhem.howto.controller.model.MessageDTO;
+import com.github.anhem.howto.model.id.JwtToken;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public abstract class TestApplication {
     private static final String USER_USERNAME = "user";
     private static final String USER_PASSWORD = "superSecret2!";
 
-    protected String adminJwtToken;
-    protected String userJwtToken;
+    protected JwtToken adminJwtToken;
+    protected JwtToken userJwtToken;
 
     private static final String AUTHENTICATE_URL = "/api/auth/authenticate";
 
@@ -59,30 +60,30 @@ public abstract class TestApplication {
     @Autowired
     protected TestRestTemplate testRestTemplate;
 
-    protected <T> ResponseEntity<T> getWithToken(String url, Class<T> responseType, String jwtToken) {
+    protected <T> ResponseEntity<T> getWithToken(String url, Class<T> responseType, JwtToken jwtToken) {
         return testRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(withJwtToken(jwtToken)), responseType);
     }
 
-    protected <T, B> ResponseEntity<T> postWithToken(String url, B body, Class<T> responseType, String jwtToken) {
+    protected <T, B> ResponseEntity<T> postWithToken(String url, B body, Class<T> responseType, JwtToken jwtToken) {
         return testRestTemplate.exchange(url, HttpMethod.POST, withJwtToken(body, jwtToken), responseType);
     }
 
-    protected <T> ResponseEntity<T> deleteWithToken(String url, Class<T> responseType, String jwtToken) {
+    protected <T> ResponseEntity<T> deleteWithToken(String url, Class<T> responseType, JwtToken jwtToken) {
         return testRestTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(withJwtToken(jwtToken)), responseType);
     }
 
-    private <T> HttpEntity<T> withJwtToken(T body, String jwtToken) {
+    private <T> HttpEntity<T> withJwtToken(T body, JwtToken jwtToken) {
         HttpHeaders httpHeaders = withJwtToken(jwtToken);
         return new HttpEntity<>(body, httpHeaders);
     }
 
-    private static HttpHeaders withJwtToken(String jwtToken) {
+    private static HttpHeaders withJwtToken(JwtToken jwtToken) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, String.format("%s%s", BEARER, jwtToken));
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, String.format("%s%s", BEARER, jwtToken.value()));
         return httpHeaders;
     }
 
-    private String authenticate(String username, String password) {
+    private JwtToken authenticate(String username, String password) {
         AuthenticateDTO authenticateDTO = AuthenticateDTO.builder()
                 .username(username)
                 .password(password)
@@ -90,7 +91,7 @@ public abstract class TestApplication {
         ResponseEntity<MessageDTO> response = testRestTemplate.postForEntity(AUTHENTICATE_URL, authenticateDTO, MessageDTO.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        return response.getBody().getMessage();
+        return new JwtToken(response.getBody().getMessage());
     }
 
 }
