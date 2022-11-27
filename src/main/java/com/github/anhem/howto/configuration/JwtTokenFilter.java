@@ -1,5 +1,6 @@
 package com.github.anhem.howto.configuration;
 
+import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.service.AuthService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -26,7 +27,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> jwtToken = getJwtToken(request);
+        Optional<JwtToken> jwtToken = getJwtToken(request);
         jwtToken.ifPresent(token -> {
             try {
                 if (authService.validateToken(token)) {
@@ -39,10 +40,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static Optional<String> getJwtToken(HttpServletRequest request) {
+    private static Optional<JwtToken> getJwtToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (bearerToken != null && bearerToken.startsWith(BEARER)) {
-            return Optional.of(bearerToken.substring(BEARER.length()));
+            return Optional.of(new JwtToken(bearerToken.substring(BEARER.length())));
         }
         return Optional.empty();
     }

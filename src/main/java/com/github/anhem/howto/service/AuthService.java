@@ -3,6 +3,7 @@ package com.github.anhem.howto.service;
 import com.github.anhem.howto.configuration.HowtoConfig;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.AccountPassword;
+import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.model.id.RoleName;
 import com.github.anhem.howto.model.id.Username;
 import com.github.anhem.howto.repository.AccountPasswordRepository;
@@ -55,15 +56,15 @@ public class AuthService implements UserDetailsService {
                 simpleGrantedAuthorities);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public JwtToken generateToken(UserDetails userDetails) {
         return JwtUtil.generateToken(userDetails, jwtSecret);
     }
 
-    public boolean validateToken(String jwtToken) {
+    public boolean validateToken(JwtToken jwtToken) {
         return JwtUtil.validateToken(jwtToken, jwtSecret);
     }
 
-    public void setSecurityContext(WebAuthenticationDetails webAuthenticationDetails, String jwtToken) {
+    public void setSecurityContext(WebAuthenticationDetails webAuthenticationDetails, JwtToken jwtToken) {
         Username username = getUsername(jwtToken, jwtSecret);
         List<SimpleGrantedAuthority> roles = getRoles(jwtToken, jwtSecret);
         UserDetails userDetails = new User(username.value(), "", roles);

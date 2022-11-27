@@ -1,5 +1,6 @@
 package com.github.anhem.howto.util;
 
+import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.model.id.RoleName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,21 +18,21 @@ class JwtUtilTest {
 
     @Test
     void canGenerateAndValidateJwtToken() {
-        String jwtToken = generateToken(USER, JWT_SECRET);
+        JwtToken jwtToken = generateToken(USER, JWT_SECRET);
 
         assertThat(validateToken(jwtToken, JWT_SECRET)).isTrue();
     }
 
     @Test
     void canGetUsernameFromJwtToken() {
-        String jwtToken = generateToken(USER, JWT_SECRET);
+        JwtToken jwtToken = generateToken(USER, JWT_SECRET);
 
         assertThat(getUsername(jwtToken, JWT_SECRET).value()).isEqualTo(USER.getUsername());
     }
 
     @Test
     void canGetRolesFromJwtToken() {
-        String jwtToken = generateToken(USER, JWT_SECRET);
+        JwtToken jwtToken = generateToken(USER, JWT_SECRET);
 
         assertThat(getRoles(jwtToken, JWT_SECRET).toArray()).containsAll(USER.getAuthorities());
     }

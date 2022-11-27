@@ -1,5 +1,6 @@
 package com.github.anhem.howto.aggregator;
 
+import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ public class AuthAggregator {
         this.authService = authService;
     }
 
-    public String authenticateAndGetJwtToken(UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
+    public JwtToken authenticateAndGetJwtToken(UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) {
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         return authService.generateToken((UserDetails) authentication.getPrincipal());
     }
