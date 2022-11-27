@@ -49,6 +49,17 @@ class AccountControllerIT extends TestApplication {
         assertThat(deleteResponse.getBody()).isEqualTo(MessageDTO.OK);
     }
 
+    @Test
+    void userIsUnauthorized() {
+        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class).toBuilder()
+                .email("integration@test.com")
+                .build();
+
+        ResponseEntity<MessageDTO> createResponse = postWithToken(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class, userJwtToken);
+
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
 
     private static void assertAccount(AccountDTO accountDTO, int accountId, CreateAccountDTO createAccountDTO) {
         assertThat(accountDTO).isNotNull();
