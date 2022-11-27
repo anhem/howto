@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping(value = "api/auth")
 public class AuthController {
@@ -20,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "authenticate")
-    public MessageDTO authenticate(@RequestBody AuthenticateDTO authenticateDTO) {
+    public MessageDTO authenticate(@Valid @RequestBody AuthenticateDTO authenticateDTO) {
         return MessageDTO.builder()
                 .message(authAggregator.authenticateAndGetJwtToken(new UsernamePasswordAuthenticationToken(authenticateDTO.getUsername(), authenticateDTO.getPassword())))
                 .build();
