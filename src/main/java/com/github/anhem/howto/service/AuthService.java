@@ -60,8 +60,7 @@ public class AuthService implements UserDetailsService {
     }
 
     public boolean validateToken(String jwtToken) {
-        UserDetails userDetails = loadUserByUsername(getUsername(jwtToken, jwtSecret).value());
-        return JwtUtil.validateToken(jwtToken, userDetails, jwtSecret);
+        return JwtUtil.validateToken(jwtToken, jwtSecret);
     }
 
     public void setSecurityContext(WebAuthenticationDetails webAuthenticationDetails, String jwtToken) {

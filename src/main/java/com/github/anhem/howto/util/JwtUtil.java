@@ -4,6 +4,7 @@ import com.github.anhem.howto.model.id.Username;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class JwtUtil {
 
     private static final int ONE_HOUR_IN_MS = 60 * 60 * 1000;
@@ -31,13 +33,14 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static Boolean validateToken(String jwtToken, UserDetails userDetails, String jwtSecret) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(jwtToken)
-                .getBody();
-
-        return claims.getSubject().equals(userDetails.getUsername()) && claims.getExpiration().after(new Date());
+    public static Boolean validateToken(String jwtToken, String jwtSecret) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwtToken);
+            return true;
+        } catch (Exception e) {
+            log.warn("Token invalid", e);
+            return false;
+        }
     }
 
     public static Username getUsername(String jwtToken, String jwtSecret) {
