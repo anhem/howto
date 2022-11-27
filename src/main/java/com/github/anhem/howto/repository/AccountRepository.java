@@ -21,7 +21,8 @@ import static com.github.anhem.howto.repository.mapper.AccountMapper.mapToAccoun
 public class AccountRepository extends JdbcRepository {
 
     private static final String SELECT_ACCOUNTS = "SELECT * FROM account";
-    private static final String SELECT_ACCOUNT = "SELECT * FROM account WHERE account_id = :accountId";
+    private static final String SELECT_ACCOUNT_BY_ID = "SELECT * FROM account WHERE account_id = :accountId";
+    private static final String SELECT_ACCOUNT_BY_USERNAME = "SELECT * FROM account WHERE username = :username";
     private static final String INSERT_ACCOUNT = "INSERT INTO account(username, email, first_name, last_name, created, last_updated) values(:username, :email, :firstName, :lastName, :created, :lastUpdated)";
     private static final String DELETE_ACCOUNT = "DELETE FROM account WHERE account_id = :accountId";
     private static final String ACCOUNT_EXISTS = "SELECT EXISTS (SELECT 1 FROM account WHERE username = :username OR email =:email LIMIT 1)";
@@ -37,9 +38,18 @@ public class AccountRepository extends JdbcRepository {
     public Account getAccount(AccountId accountId) {
         try {
             MapSqlParameterSource parameters = createParameters("accountId", accountId.value());
-            return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT, parameters, (rs, i) -> mapToAccount(rs));
+            return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_ID, parameters, (rs, i) -> mapToAccount(rs));
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(accountId);
+        }
+    }
+
+    public Account getAccount(Username username) {
+        try {
+            MapSqlParameterSource parameters = createParameters("username", username.value());
+            return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_USERNAME, parameters, (rs, i) -> mapToAccount(rs));
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException(username);
         }
     }
 

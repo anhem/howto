@@ -9,4 +9,9 @@ username: admin
 password: superSecret1!
 ```
 
+```
+username: user
+password: superSecret2!
+```
+
 http://localhost:8080/swagger-ui/index.html

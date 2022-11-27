@@ -27,7 +27,7 @@ CREATE TABLE account_role
 INSERT INTO role(role_name, description, created, last_updated)
 VALUES ('ADMINISTRATOR', 'An Administrator account to access restricted resources', now(), now());
 INSERT INTO role(role_name, description, created, last_updated)
-VALUES ('USER', 'A regular account owned by a person', now(), now());
+VALUES ('USER', 'A regular account', now(), now());
 INSERT INTO role(role_name, description, created, last_updated)
-VALUES ('SYSTEM', 'A regular account owned by a system', now(), now());
+VALUES ('MODERATOR', 'An account that can access some restricted resources', now(), now());
 

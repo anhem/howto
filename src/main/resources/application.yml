@@ -21,6 +21,9 @@ info:
   name: ${spring.application.name}
   version: @version@
 
+howto:
+  jwt-secret: super-obvious-secret-1-!
+
 ---
 
 spring:

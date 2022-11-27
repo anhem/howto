@@ -10,6 +10,7 @@ import com.github.anhem.howto.model.id.Password;
 import com.github.anhem.howto.model.id.RoleName;
 import com.github.anhem.howto.repository.AccountRoleRepository;
 import com.github.anhem.howto.service.AccountService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import static com.github.anhem.howto.controller.mapper.CreateAccountDTOMapper.ma
 
 @RestController
 @RequestMapping(value = "api/accounts")
+@SecurityRequirement(name = "Bearer Authentication")
 public class AccountController {
 
     private final AccountService accountService;
