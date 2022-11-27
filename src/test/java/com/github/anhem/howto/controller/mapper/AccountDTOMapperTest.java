@@ -1,4 +1,4 @@
-package com.github.anhem.howto.controller.api.mapper;
+package com.github.anhem.howto.controller.mapper;
 
 import com.github.anhem.howto.controller.model.AccountDTO;
 import com.github.anhem.howto.model.Account;
