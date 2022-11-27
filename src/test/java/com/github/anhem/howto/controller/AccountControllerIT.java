@@ -22,19 +22,19 @@ class AccountControllerIT extends TestApplication {
                 .email("integration@test.com")
                 .build();
 
-        ResponseEntity<MessageDTO> createResponse = testRestTemplate.postForEntity(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class);
+        ResponseEntity<MessageDTO> createResponse = postWithToken(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class, adminJwtToken);
 
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(createResponse.getBody()).isNotNull();
 
         int accountId = Integer.parseInt(createResponse.getBody().getMessage());
 
-        ResponseEntity<AccountDetailsDTO> accountDetailsResponse = testRestTemplate.getForEntity(String.format(GET_ACCOUNT_DETAILS_URL, accountId), AccountDetailsDTO.class);
+        ResponseEntity<AccountDetailsDTO> accountDetailsResponse = getWithToken(String.format(GET_ACCOUNT_DETAILS_URL, accountId), AccountDetailsDTO.class, adminJwtToken);
         assertThat(accountDetailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(accountDetailsResponse.getBody()).isNotNull();
         assertAccount(accountDetailsResponse.getBody().getAccount(), accountId, createAccountDTO);
 
-        ResponseEntity<AccountsDTO> accountsResponse = testRestTemplate.getForEntity(GET_ACCOUNTS_URL, AccountsDTO.class);
+        ResponseEntity<AccountsDTO> accountsResponse = getWithToken(GET_ACCOUNTS_URL, AccountsDTO.class, adminJwtToken);
 
         assertThat(accountsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         AccountsDTO accountsDTO = accountsResponse.getBody();
@@ -42,12 +42,13 @@ class AccountControllerIT extends TestApplication {
         assertThat(accountsDTO.getAccountCount()).isEqualTo(accountsDTO.getAccounts().size());
         assertThat(accountsDTO.getAccounts()).contains(accountDetailsResponse.getBody().getAccount());
 
-        ResponseEntity<MessageDTO> deleteResponse = deleteForEntity(String.format(DELETE_ACCOUNT_URL, accountId));
+        ResponseEntity<MessageDTO> deleteResponse = deleteWithToken(String.format(DELETE_ACCOUNT_URL, accountId), MessageDTO.class, adminJwtToken);
 
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(deleteResponse.getBody()).isNotNull();
         assertThat(deleteResponse.getBody()).isEqualTo(MessageDTO.OK);
     }
+
 
     private static void assertAccount(AccountDTO accountDTO, int accountId, CreateAccountDTO createAccountDTO) {
         assertThat(accountDTO).isNotNull();

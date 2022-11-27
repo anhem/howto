@@ -30,6 +30,8 @@ spring:
   config:
     activate:
       on-profile: integration-test
+  flyway:
+    locations: classpath:/db/migration,classpath:/dev/db/migration
 
 ---
 

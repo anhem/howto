@@ -16,7 +16,7 @@ import java.util.Optional;
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private static final String BEARER = "Bearer ";
+    public static final String BEARER = "Bearer ";
 
     private final AuthService authService;
 
