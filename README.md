@@ -1,6 +1,6 @@
 # Howto
 
-This project is used as an example of how to build and structure a Spring Boot application with REST endpoints.
+This project is used as an example of how to build and structure a Spring Boot application with REST endpoints and Spring Security
 
 ## Structure
 
