@@ -7,6 +7,8 @@ This project is used as an example of how to build and structure a Spring Boot a
 _Note! There are always exceptions to any structure, but this should give a good baseline for how to structure a
 project_
 
+### Layers
+
 This project consists of four main layers.
 
 Each layer has its own responsibility and a class from a lower layer **cannot**
@@ -20,7 +22,7 @@ consistent and to avoid circular dependencies.
 
 ### 1. Controller
 
-These are classes annotated with `@RestController` and uses `DTO` classes. `internal model` classes are only used when
+Classes annotated with `@RestController` and uses `DTO` classes. `internal model` classes are only used when
 passing data down to other layers.
 
 This should be a very thin layer with very few lines of code per method. Basically we expose endpoints and validate
@@ -34,7 +36,7 @@ From here we can interact with:
 
 ### 2. Aggregator
 
-_Classes annotated with_ `@Component` and uses both `DTO` and `internal model` classes
+Classes annotated with `@Component` and uses both `DTO` and `internal model` classes.
 
 This layer is not always necessary, but it is useful if:
 
@@ -50,7 +52,7 @@ From here we can interact with:
 
 ### 3. Service
 
-_Classes annotated with_ `@Service` and uses `internal model` classes
+Classes annotated with `@Service` and uses `internal model` classes.
 
 This is where the business logic is handled. This is where we code what we want the application to do.
 
@@ -60,7 +62,7 @@ From here we can interact with:
 
 ### 4. Repository
 
-_Classes annotated with_ `@Repository` and uses `internal model` classes
+Classes annotated with `@Repository` and uses `internal model` classes.
 
 This is how we interact with a database. Only what is necessary to interact with a database should exist here, meaning
 no business logic
