@@ -2,7 +2,7 @@ package com.github.anhem.howto.controller.mapper;
 
 import com.github.anhem.howto.controller.model.AccountDetailsDTO;
 import com.github.anhem.howto.model.Account;
-import com.github.anhem.howto.model.id.RoleName;
+import com.github.anhem.howto.model.RoleName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

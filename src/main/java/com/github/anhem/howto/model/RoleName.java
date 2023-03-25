@@ -1,4 +1,4 @@
-package com.github.anhem.howto.model.id;
+package com.github.anhem.howto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

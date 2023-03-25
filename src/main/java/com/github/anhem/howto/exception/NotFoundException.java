@@ -1,7 +1,7 @@
 package com.github.anhem.howto.exception;
 
+import com.github.anhem.howto.model.RoleName;
 import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.RoleName;
 import com.github.anhem.howto.model.id.Username;
 
 public class NotFoundException extends RuntimeException {

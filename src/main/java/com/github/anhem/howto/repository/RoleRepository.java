@@ -2,8 +2,8 @@ package com.github.anhem.howto.repository;
 
 import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Role;
+import com.github.anhem.howto.model.RoleName;
 import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.RoleName;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

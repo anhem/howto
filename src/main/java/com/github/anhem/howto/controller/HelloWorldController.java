@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENTICATION;
-import static com.github.anhem.howto.model.id.RoleName.Constants.*;
+import static com.github.anhem.howto.model.RoleName.Constants.*;
 
 @RestController
 @RequestMapping(value = "api/hello-world")

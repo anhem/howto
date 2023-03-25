@@ -1,8 +1,9 @@
 package com.github.anhem.howto.model.id;
 
+import com.github.anhem.howto.model.RoleName;
 import org.junit.jupiter.api.Test;
 
-import static com.github.anhem.howto.model.id.RoleName.ADMINISTRATOR;
+import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

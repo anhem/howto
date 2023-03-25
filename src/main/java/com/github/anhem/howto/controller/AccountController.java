@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENTICATION;
 import static com.github.anhem.howto.controller.mapper.AccountsDTOMapper.mapToAccountsDTO;
 import static com.github.anhem.howto.controller.mapper.CreateAccountDTOMapper.mapToAccount;
-import static com.github.anhem.howto.model.id.RoleName.Constants.ADMINISTRATOR;
+import static com.github.anhem.howto.model.RoleName.Constants.ADMINISTRATOR;
 
 @RestController
 @Secured(ADMINISTRATOR)

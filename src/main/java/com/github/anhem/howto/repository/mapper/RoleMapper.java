@@ -1,8 +1,8 @@
 package com.github.anhem.howto.repository.mapper;
 
 import com.github.anhem.howto.model.Role;
+import com.github.anhem.howto.model.RoleName;
 import com.github.anhem.howto.model.id.RoleId;
-import com.github.anhem.howto.model.id.RoleName;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

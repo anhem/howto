@@ -1,7 +1,7 @@
 package com.github.anhem.howto.util;
 
+import com.github.anhem.howto.model.RoleName;
 import com.github.anhem.howto.model.id.JwtToken;
-import com.github.anhem.howto.model.id.RoleName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

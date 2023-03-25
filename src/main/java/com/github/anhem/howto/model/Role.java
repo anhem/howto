@@ -1,7 +1,6 @@
 package com.github.anhem.howto.model;
 
 import com.github.anhem.howto.model.id.RoleId;
-import com.github.anhem.howto.model.id.RoleName;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;

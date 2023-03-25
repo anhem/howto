@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.List;
 
+import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
+import static com.github.anhem.howto.model.RoleName.USER;
 import static com.github.anhem.howto.model.id.AccountPasswordId.NEW_ACCOUNT_PASSWORD_ID;
-import static com.github.anhem.howto.model.id.RoleName.ADMINISTRATOR;
-import static com.github.anhem.howto.model.id.RoleName.USER;
 
 @Slf4j
 @Service

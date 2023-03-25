@@ -2,8 +2,8 @@ package com.github.anhem.howto.aggregator;
 
 import com.github.anhem.howto.controller.model.AccountDetailsDTO;
 import com.github.anhem.howto.model.Account;
+import com.github.anhem.howto.model.RoleName;
 import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.RoleName;
 import com.github.anhem.howto.repository.AccountRoleRepository;
 import com.github.anhem.howto.service.AccountService;
 import org.springframework.stereotype.Component;
