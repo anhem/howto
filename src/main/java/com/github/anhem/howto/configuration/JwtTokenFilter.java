@@ -2,22 +2,25 @@ package com.github.anhem.howto.configuration;
 
 import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.service.AuthService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+@Slf4j
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     public static final String BEARER = "Bearer ";
+    public static final String BEARER_AUTHENTICATION = BEARER + "Authentication";
 
     private final AuthService authService;
 
@@ -34,7 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                     authService.setSecurityContext(new WebAuthenticationDetailsSource().buildDetails(request), token);
                 }
             } catch (Exception e) {
-                logger.error("Could not validate token", e);
+                log.error("Could not validate token", e);
             }
         });
         filterChain.doFilter(request, response);

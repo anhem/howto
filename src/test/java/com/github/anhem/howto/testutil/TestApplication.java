@@ -3,6 +3,7 @@ package com.github.anhem.howto.testutil;
 import com.github.anhem.howto.controller.model.AuthenticateDTO;
 import com.github.anhem.howto.controller.model.MessageDTO;
 import com.github.anhem.howto.model.id.JwtToken;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER;
@@ -36,15 +36,20 @@ public abstract class TestApplication {
 
     private static final String AUTHENTICATE_URL = "/api/auth/authenticate";
 
-    @Container
     static final PostgreSQLContainer<?> SQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.5")
-            .withDatabaseName("howto-db-it");
+            .withDatabaseName("howto-db-it")
+            .withReuse(true);
 
     @DynamicPropertySource
     static void registerMySQLProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", SQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.hikari.username", SQL_CONTAINER::getUsername);
         registry.add("spring.datasource.hikari.password", SQL_CONTAINER::getPassword);
+    }
+
+    @BeforeAll
+    public static void beforeAll() {
+        SQL_CONTAINER.start();
     }
 
     @BeforeEach

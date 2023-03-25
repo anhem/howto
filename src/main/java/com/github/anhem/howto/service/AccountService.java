@@ -17,8 +17,8 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.github.anhem.howto.model.id.AccountPasswordId.NEW_ACCOUNT_PASSWORD_ID;
-import static com.github.anhem.howto.model.id.RoleName.ADMINISTRATOR_ROLE_NAME;
-import static com.github.anhem.howto.model.id.RoleName.USER_ROLE_NAME;
+import static com.github.anhem.howto.model.id.RoleName.ADMINISTRATOR;
+import static com.github.anhem.howto.model.id.RoleName.USER;
 
 @Slf4j
 @Service
@@ -49,13 +49,13 @@ public class AccountService {
 
     @Transactional
     public AccountId createUserAccount(Account account, Password password) {
-        Role userRole = roleRepository.getRoleByName(USER_ROLE_NAME);
+        Role userRole = roleRepository.getRoleByName(USER);
         return createAccount(account, password, userRole);
     }
 
     @Transactional
     public AccountId createAdministratorAccount(Account account, Password password) {
-        Role administratorRole = roleRepository.getRoleByName(ADMINISTRATOR_ROLE_NAME);
+        Role administratorRole = roleRepository.getRoleByName(ADMINISTRATOR);
         return createAccount(account, password, administratorRole);
     }
 

@@ -1,10 +1,9 @@
 package com.github.anhem.howto.controller.model;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import javax.validation.constraints.NotEmpty;
 
 @Value
 @Builder

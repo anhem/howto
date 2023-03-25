@@ -25,7 +25,7 @@ class AccountDetailsDTOMapperTest {
         assertThat(accountDetailsDTO.getCreated()).isEqualTo(account.getCreated());
         assertThat(accountDetailsDTO.getUpdated()).isEqualTo(account.getLastUpdated());
         assertThat(accountDetailsDTO.getRoles()).hasSize(roleNames.size());
-        assertThat(accountDetailsDTO.getRoles()).contains(roleNames.get(0).value());
+        assertThat(accountDetailsDTO.getRoles()).contains(roleNames.get(0).getValue());
     }
 
 }

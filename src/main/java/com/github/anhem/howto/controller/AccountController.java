@@ -9,18 +9,21 @@ import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.Password;
 import com.github.anhem.howto.service.AccountService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
+import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENTICATION;
 import static com.github.anhem.howto.controller.mapper.AccountsDTOMapper.mapToAccountsDTO;
 import static com.github.anhem.howto.controller.mapper.CreateAccountDTOMapper.mapToAccount;
+import static com.github.anhem.howto.model.id.RoleName.Constants.ADMINISTRATOR;
 
 @RestController
+@Secured(ADMINISTRATOR)
 @RequestMapping(value = "api/accounts")
-@SecurityRequirement(name = "Bearer Authentication")
+@SecurityRequirement(name = BEARER_AUTHENTICATION)
 public class AccountController {
 
     private final AccountService accountService;
@@ -39,7 +42,7 @@ public class AccountController {
         return mapToAccountsDTO(accountService.getUsers());
     }
 
-    @GetMapping(value = "/details/{accountId}")
+    @GetMapping(value = "details/{accountId}")
     public AccountDetailsDTO getAccountDetails(@PathVariable int accountId) {
         return accountAggregator.getAccountDetails(new AccountId(accountId));
     }
@@ -61,3 +64,4 @@ public class AccountController {
     }
 
 }
+

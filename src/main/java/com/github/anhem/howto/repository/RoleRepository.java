@@ -27,13 +27,13 @@ public class RoleRepository extends JdbcRepository {
     }
 
     public List<Role> getAvailableRoles(AccountId accountId) {
-        SqlParameterSource parameters = createParameters("accountId", accountId.value());
+        SqlParameterSource parameters = createParameters("accountId", accountId.isNew());
         return namedParameterJdbcTemplate.query(SELECT_AVAILABLE_ROLES, parameters, (rs, i) -> mapToRole(rs));
     }
 
     public Role getRoleByName(RoleName roleName) {
         try {
-            MapSqlParameterSource parameters = createParameters("roleName", roleName.value());
+            MapSqlParameterSource parameters = createParameters("roleName", roleName.name());
             return namedParameterJdbcTemplate.queryForObject(SELECT_ROLE_BY_NAME, parameters, (rs, i) -> mapToRole(rs));
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(roleName);

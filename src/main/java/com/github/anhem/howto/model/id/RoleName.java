@@ -1,15 +1,30 @@
 package com.github.anhem.howto.model.id;
 
-import lombok.NonNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public record RoleName(@NonNull String value) implements Id<String> {
+import java.util.Arrays;
 
-    public static final RoleName USER_ROLE_NAME = new RoleName("USER");
-    public static final RoleName MODERATOR_ROLE_NAME = new RoleName("MODERATOR");
-    public static final RoleName ADMINISTRATOR_ROLE_NAME = new RoleName("ADMINISTRATOR");
+@Getter
+@AllArgsConstructor
+public enum RoleName {
 
-    public String getRole() {
-        return String.format("ROLE_%s", this.value);
+    USER(Constants.USER),
+    MODERATOR(Constants.MODERATOR),
+    ADMINISTRATOR(Constants.ADMINISTRATOR);
+
+    private final String value;
+
+    public static RoleName fromString(String value) {
+        return Arrays.stream(RoleName.values())
+                .filter(roleName -> roleName.name().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(String.format("Invalid roleName %s", value)));
     }
 
+    public static class Constants {
+        public static final String USER = "ROLE_USER";
+        public static final String MODERATOR = "ROLE_MODERATOR";
+        public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+    }
 }

@@ -4,13 +4,12 @@ import com.github.anhem.howto.aggregator.AuthAggregator;
 import com.github.anhem.howto.controller.model.AuthenticateDTO;
 import com.github.anhem.howto.controller.model.MessageDTO;
 import com.github.anhem.howto.model.id.JwtToken;
+import jakarta.validation.Valid;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/auth")

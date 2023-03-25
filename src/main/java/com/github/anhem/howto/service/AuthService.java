@@ -47,7 +47,7 @@ public class AuthService implements UserDetailsService {
         List<RoleName> roleNames = accountRoleRepository.getRoleNames(account.getAccountId());
 
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = roleNames.stream()
-                .map(roleName -> new SimpleGrantedAuthority(roleName.getRole()))
+                .map(roleName -> new SimpleGrantedAuthority(roleName.getValue()))
                 .toList();
 
         return new User(
