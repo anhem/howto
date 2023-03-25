@@ -47,12 +47,6 @@ public class AccountController {
         return accountAggregator.getAccountDetails(new AccountId(accountId));
     }
 
-    @DeleteMapping(value = "{accountId}")
-    public MessageDTO removeAccount(@PathVariable int accountId) {
-        accountService.removeAccount(new AccountId(accountId));
-        return MessageDTO.OK;
-    }
-
     @PostMapping(value = "users/user")
     public MessageDTO createUserAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
         return MessageDTO.fromId(accountService.createUserAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
@@ -61,6 +55,12 @@ public class AccountController {
     @PostMapping(value = "users/administrator")
     public MessageDTO createAdministratorAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
         return MessageDTO.fromId(accountService.createAdministratorAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
+    }
+
+    @DeleteMapping(value = "{accountId}")
+    public MessageDTO removeAccount(@PathVariable int accountId) {
+        accountService.removeAccount(new AccountId(accountId));
+        return MessageDTO.OK;
     }
 
 }

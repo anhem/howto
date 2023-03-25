@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.github.anhem.howto.repository.mapper.AccountMapper.mapToAccount;
 
@@ -22,6 +24,7 @@ public class AccountRepository extends JdbcRepository {
 
     private static final String SELECT_ACCOUNTS = "SELECT * FROM account";
     private static final String SELECT_ACCOUNT_BY_ID = "SELECT * FROM account WHERE account_id = :accountId";
+    private static final String SELECT_ACCOUNTS_BY_IDS = "SELECT * FROM account WHERE account_id IN(:accountIds)";
     private static final String SELECT_ACCOUNT_BY_USERNAME = "SELECT * FROM account WHERE username = :username";
     private static final String INSERT_ACCOUNT = "INSERT INTO account(username, email, first_name, last_name, created, last_updated) values(:username, :email, :firstName, :lastName, :created, :lastUpdated)";
     private static final String DELETE_ACCOUNT = "DELETE FROM account WHERE account_id = :accountId";
@@ -33,6 +36,13 @@ public class AccountRepository extends JdbcRepository {
 
     public List<Account> getAccounts() {
         return namedParameterJdbcTemplate.query(SELECT_ACCOUNTS, (rs, i) -> mapToAccount(rs));
+    }
+
+    public List<Account> getAccounts(Set<AccountId> accountIds) {
+        List<Integer> accountsIds = accountIds.stream().map(AccountId::value).collect(Collectors.toList());
+        MapSqlParameterSource parameters = createParameters("accountIds", accountsIds);
+
+        return namedParameterJdbcTemplate.query(SELECT_ACCOUNTS_BY_IDS, parameters, (rs, i) -> mapToAccount(rs));
     }
 
     public Account getAccount(AccountId accountId) {

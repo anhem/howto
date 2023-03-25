@@ -5,6 +5,7 @@ import com.github.anhem.howto.model.AccountPassword;
 import com.github.anhem.howto.model.Role;
 import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.Password;
+import com.github.anhem.howto.model.id.Username;
 import com.github.anhem.howto.repository.AccountPasswordRepository;
 import com.github.anhem.howto.repository.AccountRepository;
 import com.github.anhem.howto.repository.AccountRoleRepository;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
 import static com.github.anhem.howto.model.RoleName.USER;
@@ -47,6 +49,10 @@ public class AccountService {
         return accountRepository.getAccount(accountId);
     }
 
+    public List<Account> getAccounts(Set<AccountId> accountIds) {
+        return accountRepository.getAccounts(accountIds);
+    }
+
     @Transactional
     public AccountId createUserAccount(Account account, Password password) {
         Role userRole = roleRepository.getRoleByName(USER);
@@ -75,6 +81,9 @@ public class AccountService {
         if (!account.getAccountId().isNew()) {
             throw new IllegalArgumentException("invalid accountId");
         }
+        if (account.getUsername().equals(Username.UNKNOWN)) {
+            throw new IllegalArgumentException("reserved username");
+        }
         if (accountRepository.accountExists(account.getUsername(), account.getEmail())) {
             throw new IllegalArgumentException("username or email already exists");
         }
@@ -90,5 +99,4 @@ public class AccountService {
         log.info("Account {} ({}) created", account.getUsername(), accountId);
         return accountId;
     }
-
 }

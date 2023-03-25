@@ -1,6 +1,7 @@
 package com.github.anhem.howto.controller;
 
 import com.github.anhem.howto.controller.model.ErrorDTO;
+import com.github.anhem.howto.exception.ForbiddenException;
 import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.id.AccountId;
 import org.junit.jupiter.api.Test;
@@ -75,6 +76,15 @@ class ControllerAdviceTest {
     @Test
     public void handleAccessDeniedExceptionReturnsErrorDTO() {
         ErrorDTO errorDTO = controllerAdvice.handleAccessDeniedException(new AccessDeniedException(PASSWORD_ERROR_MESSAGE_1), webRequest);
+
+        assertThat(errorDTO.getErrorCode()).isEqualTo(ACCESS_DENIED);
+        assertThat(errorDTO.getMessage()).isEqualTo(DENIED_ERROR_MESSAGE);
+        assertThat(errorDTO.getFieldErrors()).hasSize(0);
+    }
+
+    @Test
+    public void handleForbiddenExceptionReturnsErrorDTO() {
+        ErrorDTO errorDTO = controllerAdvice.handleForbiddenException(new ForbiddenException(), webRequest);
 
         assertThat(errorDTO.getErrorCode()).isEqualTo(ACCESS_DENIED);
         assertThat(errorDTO.getMessage()).isEqualTo(DENIED_ERROR_MESSAGE);
