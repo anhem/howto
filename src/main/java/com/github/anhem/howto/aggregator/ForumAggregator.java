@@ -24,6 +24,7 @@ import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDT
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTOs;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTO;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTOs;
+import static com.github.anhem.howto.controller.model.MessageDTO.fromId;
 import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
 import static com.github.anhem.howto.model.RoleName.MODERATOR;
 
@@ -56,7 +57,7 @@ public class ForumAggregator {
 
     public MessageDTO createPost(CreatePostDTO createPostDTO) {
         AccountId accountId = authService.getLoggedInAccountId();
-        return MessageDTO.fromId(forumService.createPost(mapToPost(createPostDTO, accountId)));
+        return fromId(forumService.createPost(mapToPost(createPostDTO, accountId)));
     }
 
     public void removePost(PostId postId) {
@@ -84,7 +85,7 @@ public class ForumAggregator {
 
     public MessageDTO createReply(CreateReplyDTO createReplyDTO) {
         AccountId accountId = authService.getLoggedInAccountId();
-        return MessageDTO.fromId(forumService.createReply(mapToReply(createReplyDTO, accountId)));
+        return fromId(forumService.createReply(mapToReply(createReplyDTO, accountId)));
     }
 
     public void removeReply(ReplyId replyId) {

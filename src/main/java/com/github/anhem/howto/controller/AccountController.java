@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENTICATION;
 import static com.github.anhem.howto.controller.mapper.AccountsDTOMapper.mapToAccountsDTO;
 import static com.github.anhem.howto.controller.mapper.CreateAccountDTOMapper.mapToAccount;
+import static com.github.anhem.howto.controller.model.MessageDTO.fromId;
 import static com.github.anhem.howto.model.RoleName.Constants.ADMINISTRATOR;
 
 @RestController
@@ -49,12 +50,12 @@ public class AccountController {
 
     @PostMapping(value = "users/user")
     public MessageDTO createUserAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
-        return MessageDTO.fromId(accountService.createUserAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
+        return fromId(accountService.createUserAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
     }
 
     @PostMapping(value = "users/administrator")
     public MessageDTO createAdministratorAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
-        return MessageDTO.fromId(accountService.createAdministratorAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
+        return fromId(accountService.createAdministratorAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
     }
 
     @DeleteMapping(value = "{accountId}")

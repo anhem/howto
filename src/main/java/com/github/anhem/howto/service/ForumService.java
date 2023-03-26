@@ -29,7 +29,6 @@ public class ForumService {
         this.replyRepository = replyRepository;
     }
 
-
     public List<Category> getCategories() {
         return categoryRepository.getCategories();
     }

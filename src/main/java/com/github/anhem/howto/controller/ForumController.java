@@ -1,7 +1,6 @@
 package com.github.anhem.howto.controller;
 
 import com.github.anhem.howto.aggregator.ForumAggregator;
-import com.github.anhem.howto.controller.mapper.CategoryDTOMapper;
 import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.model.id.CategoryId;
 import com.github.anhem.howto.model.id.PostId;
@@ -15,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENTICATION;
+import static com.github.anhem.howto.controller.mapper.CategoryDTOMapper.mapToCategoryDTO;
 import static com.github.anhem.howto.controller.mapper.CategoryDTOMapper.mapToCategoryDTOs;
 import static com.github.anhem.howto.controller.mapper.CreateCategoryDTOMapper.mapToCategory;
+import static com.github.anhem.howto.controller.model.MessageDTO.fromId;
 import static com.github.anhem.howto.model.RoleName.Constants.ADMINISTRATOR;
 import static com.github.anhem.howto.model.RoleName.Constants.MODERATOR;
 
@@ -40,13 +41,13 @@ public class ForumController {
 
     @GetMapping("categories/{categoryId}")
     public CategoryDTO getCategory(@PathVariable Integer categoryId) {
-        return CategoryDTOMapper.mapToCategoryDTO(forumService.getCategory(new CategoryId(categoryId)));
+        return mapToCategoryDTO(forumService.getCategory(new CategoryId(categoryId)));
     }
 
     @Secured({MODERATOR, ADMINISTRATOR})
     @PostMapping(value = "categories")
     public MessageDTO createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO) {
-        return MessageDTO.fromId(forumService.createCategory(mapToCategory(createCategoryDTO)));
+        return fromId(forumService.createCategory(mapToCategory(createCategoryDTO)));
     }
 
     @Secured(ADMINISTRATOR)
