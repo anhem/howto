@@ -12,7 +12,7 @@ public class RoleMapper {
     public static Role mapToRole(ResultSet rs) throws SQLException {
         return Role.builder()
                 .roleId(new RoleId(rs.getInt("role_id")))
-                .roleName(RoleName.fromString(rs.getString("role_name")))
+                .roleName(RoleName.fromName(rs.getString("role_name")))
                 .description(rs.getString("description"))
                 .created(rs.getTimestamp("created").toInstant())
                 .lastUpdated(rs.getTimestamp("last_updated").toInstant())

@@ -29,15 +29,13 @@ class ForumControllerIT extends TestApplication {
     void categoryCrd() {
         int categoryId = createCategory();
 
-        getCategory(categoryId, true);
-        List<CategoryDTO> categoriesAfterCreate = getCategories();
-        assertThat(findCategoryDTO(categoryId, categoriesAfterCreate)).isPresent();
+        assertAndGetCategory(categoryId, true);
+        assertThat(findCategoryDTO(categoryId, getCategories())).isPresent();
 
         deleteCategory(categoryId);
 
-        getCategory(categoryId, false);
-        List<CategoryDTO> categoriesAfterDelete = getCategories();
-        assertThat(findCategoryDTO(categoryId, categoriesAfterDelete)).isEmpty();
+        assertAndGetCategory(categoryId, false);
+        assertThat(findCategoryDTO(categoryId, getCategories())).isEmpty();
     }
 
     @Test
@@ -45,15 +43,13 @@ class ForumControllerIT extends TestApplication {
         int categoryId = createCategory();
         int postId = createPost(categoryId);
 
-        getPost(postId, true);
-        List<PostDTO> postsAfterCreate = getPosts(categoryId);
-        assertThat(findPostDTO(postId, postsAfterCreate)).isPresent();
+        assertAndGetPost(postId, true);
+        assertThat(findPostDTO(postId, getPosts(categoryId))).isPresent();
 
         deletePost(postId);
 
-        getPost(postId, false);
-        List<PostDTO> postsAfterDelete = getPosts(categoryId);
-        assertThat(findPostDTO(postId, postsAfterDelete)).isEmpty();
+        assertAndGetPost(postId, false);
+        assertThat(findPostDTO(postId, getPosts(categoryId))).isEmpty();
     }
 
     @Test
@@ -61,21 +57,19 @@ class ForumControllerIT extends TestApplication {
         int postId = createPost(createCategory());
         int replyId = createReply(postId);
 
-        getReply(replyId, true);
-        List<ReplyDTO> repliesAfterCreate = getReplies(postId);
-        assertThat(findReplyDTO(replyId, repliesAfterCreate)).isPresent();
+        assertAndGetReply(replyId, true);
+        assertThat(findReplyDTO(replyId, getReplies(postId))).isPresent();
 
         deleteReply(replyId);
 
-        getReply(replyId, false);
-        List<ReplyDTO> repliesAfterDelete = getReplies(postId);
-        assertThat(findReplyDTO(replyId, repliesAfterDelete)).isEmpty();
+        assertAndGetReply(replyId, false);
+        assertThat(findReplyDTO(replyId, getReplies(postId))).isEmpty();
     }
 
     @Test
-    public void canCreateButNotDeleteCategory() {
+    public void moderatorCanCreateButNotDeleteCategory() {
         int categoryId = createCategory(moderatorJwtToken);
-        getCategory(categoryId, true);
+        assertAndGetCategory(categoryId, true);
 
         ResponseEntity<ErrorDTO> response = deleteWithToken(String.format(CATEGORY_URL, categoryId), ErrorDTO.class, moderatorJwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -84,12 +78,50 @@ class ForumControllerIT extends TestApplication {
     }
 
     @Test
-    public void cannotCreateCategory() {
+    public void userCannotCreateCategory() {
         ResponseEntity<ErrorDTO> response = postWithToken(GET_CATEGORIES_URL, populate(CreateCategoryDTO.class), ErrorDTO.class, userJwtToken);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(response.getBody()).isNotNull();
         assertThat(response.getBody().getErrorCode()).isEqualTo(ErrorCode.ACCESS_DENIED);
+    }
+
+    @Test
+    public void moderatorCanDeletePostMadeByUser() {
+        int categoryId = createCategory();
+        int postId = createPost(categoryId);
+
+        deletePost(postId, moderatorJwtToken);
+
+        assertAndGetPost(postId, false);
+    }
+
+    @Test
+    public void moderatorCanDeleteReplyMadeByUser() {
+        int replyId = createReply(createPost(createCategory()));
+
+        deleteReply(replyId, moderatorJwtToken);
+
+        assertAndGetReply(replyId, false);
+    }
+
+    @Test
+    public void administratorCanDeletePostMadeByUser() {
+        int categoryId = createCategory();
+        int postId = createPost(categoryId);
+
+        deletePost(postId, adminJwtToken);
+
+        assertAndGetPost(postId, false);
+    }
+
+    @Test
+    public void administratorCanDeleteReplyMadeByUser() {
+        int replyId = createReply(createPost(createCategory()));
+
+        deleteReply(replyId, adminJwtToken);
+
+        assertAndGetReply(replyId, false);
     }
 
     private List<CategoryDTO> getCategories() {
@@ -99,7 +131,7 @@ class ForumControllerIT extends TestApplication {
         return Arrays.asList(response.getBody());
     }
 
-    private Optional<CategoryDTO> getCategory(int categoryId, boolean shouldExist) {
+    private Optional<CategoryDTO> assertAndGetCategory(int categoryId, boolean shouldExist) {
         if (shouldExist) {
             ResponseEntity<CategoryDTO> response = getWithToken(String.format(CATEGORY_URL, categoryId), CategoryDTO.class, userJwtToken);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -159,7 +191,7 @@ class ForumControllerIT extends TestApplication {
         return Arrays.asList(response.getBody());
     }
 
-    private Optional<PostDTO> getPost(int postId, boolean shouldExist) {
+    private Optional<PostDTO> assertAndGetPost(int postId, boolean shouldExist) {
         if (shouldExist) {
             ResponseEntity<PostDTO> response = getWithToken(String.format(POST_URL, postId), PostDTO.class, userJwtToken);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -180,7 +212,11 @@ class ForumControllerIT extends TestApplication {
     }
 
     private void deletePost(int postId) {
-        ResponseEntity<MessageDTO> deleteResponse = deleteWithToken(String.format(POST_URL, postId), MessageDTO.class, userJwtToken);
+        deletePost(postId, userJwtToken);
+    }
+
+    private void deletePost(int postId, JwtToken jwtToken) {
+        ResponseEntity<MessageDTO> deleteResponse = deleteWithToken(String.format(POST_URL, postId), MessageDTO.class, jwtToken);
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -204,7 +240,7 @@ class ForumControllerIT extends TestApplication {
         return Arrays.asList(response.getBody());
     }
 
-    private Optional<ReplyDTO> getReply(int replyId, boolean shouldExist) {
+    private Optional<ReplyDTO> assertAndGetReply(int replyId, boolean shouldExist) {
         if (shouldExist) {
             ResponseEntity<ReplyDTO> response = getWithToken(String.format(REPLY_URL, replyId), ReplyDTO.class, userJwtToken);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -225,7 +261,11 @@ class ForumControllerIT extends TestApplication {
     }
 
     private void deleteReply(int replyId) {
-        ResponseEntity<MessageDTO> deleteResponse = deleteWithToken(String.format(REPLY_URL, replyId), MessageDTO.class, userJwtToken);
+        deleteReply(replyId, userJwtToken);
+    }
+
+    private void deleteReply(int replyId, JwtToken jwtToken) {
+        ResponseEntity<MessageDTO> deleteResponse = deleteWithToken(String.format(REPLY_URL, replyId), MessageDTO.class, jwtToken);
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }

@@ -24,6 +24,8 @@ import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDT
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTOs;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTO;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTOs;
+import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
+import static com.github.anhem.howto.model.RoleName.MODERATOR;
 
 @Component
 public class ForumAggregator {
@@ -53,14 +55,14 @@ public class ForumAggregator {
     }
 
     public MessageDTO createPost(CreatePostDTO createPostDTO) {
-        AccountId accountId = authService.getAccountId();
+        AccountId accountId = authService.getLoggedInAccountId();
         return MessageDTO.fromId(forumService.createPost(mapToPost(createPostDTO, accountId)));
     }
 
     public void removePost(PostId postId) {
-        AccountId accountId = authService.getAccountId();
+        AccountId accountId = authService.getLoggedInAccountId();
         Post post = forumService.getPost(postId);
-        if (post.getAccountId().equals(accountId)) {
+        if (post.getAccountId().equals(accountId) || authService.loggedInAccountHasAnyOf(List.of(MODERATOR, ADMINISTRATOR))) {
             forumService.removePost(postId);
         } else {
             throw new ForbiddenException();
@@ -81,14 +83,14 @@ public class ForumAggregator {
     }
 
     public MessageDTO createReply(CreateReplyDTO createReplyDTO) {
-        AccountId accountId = authService.getAccountId();
+        AccountId accountId = authService.getLoggedInAccountId();
         return MessageDTO.fromId(forumService.createReply(mapToReply(createReplyDTO, accountId)));
     }
 
     public void removeReply(ReplyId replyId) {
-        AccountId accountId = authService.getAccountId();
+        AccountId accountId = authService.getLoggedInAccountId();
         Reply reply = forumService.getReply(replyId);
-        if (reply.getAccountId().equals(accountId)) {
+        if (reply.getAccountId().equals(accountId) || authService.loggedInAccountHasAnyOf(List.of(MODERATOR, ADMINISTRATOR))) {
             forumService.removeReply(replyId);
         } else {
             throw new ForbiddenException();

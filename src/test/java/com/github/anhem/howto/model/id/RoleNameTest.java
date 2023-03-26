@@ -16,12 +16,12 @@ class RoleNameTest {
 
     @Test
     public void fromStringReturnsRoleName() {
-        assertThat(RoleName.fromString(ADMINISTRATOR.name())).isEqualTo(ADMINISTRATOR);
+        assertThat(RoleName.fromName(ADMINISTRATOR.name())).isEqualTo(ADMINISTRATOR);
     }
 
     @Test
     public void fromStringThrowsExceptionWhenInvalidRoleName() {
-        assertThatThrownBy(() -> RoleName.fromString("invalidRoleName")).isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> RoleName.fromName("invalidRoleName")).isInstanceOf(RuntimeException.class);
     }
 
 }

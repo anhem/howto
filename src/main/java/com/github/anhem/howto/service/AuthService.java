@@ -75,9 +75,20 @@ public class AuthService implements UserDetailsService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public AccountId getAccountId() {
+    public AccountId getLoggedInAccountId() {
         UserDetails userDetails = getUserDetailsFromSecurityContext();
         return accountRepository.getAccount(new Username(userDetails.getUsername())).getAccountId();
+    }
+
+    public boolean loggedInAccountHasAnyOf(List<RoleName> roleNames) {
+        List<RoleName> loggedInRoleNames = getLoggedInRoleNames();
+        return roleNames.stream().anyMatch(loggedInRoleNames::contains);
+    }
+
+    private List<RoleName> getLoggedInRoleNames() {
+        return getUserDetailsFromSecurityContext().getAuthorities().stream()
+                .map(grantedAuthority -> RoleName.fromValue(grantedAuthority.getAuthority()))
+                .toList();
     }
 
     private static UserDetails getUserDetailsFromSecurityContext() {

@@ -15,11 +15,19 @@ public enum RoleName {
 
     private final String value;
 
-    public static RoleName fromString(String value) {
+    public static RoleName fromName(String name) {
         return Arrays.stream(RoleName.values())
-                .filter(roleName -> roleName.name().equals(value))
+                .filter(roleName -> roleName.name().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Invalid roleName %s", value)));
+                .orElseThrow(() -> new RuntimeException(String.format("Invalid roleName %s", name)));
+    }
+
+    public static RoleName fromValue(String value) {
+        String role = value.replace("ROLE_", "");
+        return Arrays.stream(RoleName.values())
+                .filter(roleName -> roleName.name().equals(role))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(String.format("Invalid value %s", value)));
     }
 
     public static class Constants {

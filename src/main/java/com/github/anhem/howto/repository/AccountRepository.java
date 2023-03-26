@@ -38,7 +38,7 @@ public class AccountRepository extends JdbcRepository {
     }
 
     public List<Account> getAccounts(Set<AccountId> accountIds) {
-        List<Integer> accountsIds = accountIds.stream().map(AccountId::value).collect(Collectors.toList());
+        List<Integer> accountsIds = getAccountsIds(accountIds);
         MapSqlParameterSource parameters = createParameters("accountIds", accountsIds);
 
         return namedParameterJdbcTemplate.query(SELECT_ACCOUNTS_BY_IDS, parameters, (rs, i) -> mapToAccount(rs));
@@ -85,5 +85,11 @@ public class AccountRepository extends JdbcRepository {
                 .addValue("username", username.value())
                 .addValue("email", email);
         return namedParameterJdbcTemplate.queryForObject(ACCOUNT_EXISTS, params, Boolean.class);
+    }
+
+    private static List<Integer> getAccountsIds(Set<AccountId> accountIds) {
+        return accountIds.stream()
+                .map(AccountId::value)
+                .collect(Collectors.toList());
     }
 }

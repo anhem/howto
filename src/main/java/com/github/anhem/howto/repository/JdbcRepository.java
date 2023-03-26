@@ -18,7 +18,7 @@ public abstract class JdbcRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    protected static KeyHolder createKeyHolder() {
+    protected KeyHolder createKeyHolder() {
         return new GeneratedKeyHolder();
     }
 
