@@ -1,6 +1,7 @@
 package com.github.anhem.howto.controller;
 
 import com.github.anhem.howto.controller.model.*;
+import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.testutil.TestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,26 @@ class ForumControllerIT extends TestApplication {
         assertThat(findReplyDTO(replyId, repliesAfterDelete)).isEmpty();
     }
 
+    @Test
+    public void canCreateButNotDeleteCategory() {
+        int categoryId = createCategory(moderatorJwtToken);
+        getCategory(categoryId, true);
+
+        ResponseEntity<ErrorDTO> response = deleteWithToken(String.format(CATEGORY_URL, categoryId), ErrorDTO.class, moderatorJwtToken);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getErrorCode()).isEqualTo(ErrorCode.ACCESS_DENIED);
+    }
+
+    @Test
+    public void cannotCreateCategory() {
+        ResponseEntity<ErrorDTO> response = postWithToken(GET_CATEGORIES_URL, populate(CreateCategoryDTO.class), ErrorDTO.class, userJwtToken);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getErrorCode()).isEqualTo(ErrorCode.ACCESS_DENIED);
+    }
+
     private List<CategoryDTO> getCategories() {
         ResponseEntity<CategoryDTO[]> response = getWithToken(GET_CATEGORIES_URL, CategoryDTO[].class, userJwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -94,7 +115,11 @@ class ForumControllerIT extends TestApplication {
     }
 
     private int createCategory() {
-        ResponseEntity<MessageDTO> response = postWithToken(GET_CATEGORIES_URL, populate(CreateCategoryDTO.class), MessageDTO.class, adminJwtToken);
+        return createCategory(adminJwtToken);
+    }
+
+    private int createCategory(JwtToken jwtToken) {
+        ResponseEntity<MessageDTO> response = postWithToken(GET_CATEGORIES_URL, populate(CreateCategoryDTO.class), MessageDTO.class, jwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         int categoryId = Integer.parseInt(response.getBody().getMessage());

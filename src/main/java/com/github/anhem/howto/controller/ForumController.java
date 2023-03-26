@@ -18,6 +18,7 @@ import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENT
 import static com.github.anhem.howto.controller.mapper.CategoryDTOMapper.mapToCategoryDTOs;
 import static com.github.anhem.howto.controller.mapper.CreateCategoryDTOMapper.mapToCategory;
 import static com.github.anhem.howto.model.RoleName.Constants.ADMINISTRATOR;
+import static com.github.anhem.howto.model.RoleName.Constants.MODERATOR;
 
 @RestController
 @RequestMapping(value = "api/forum")
@@ -42,7 +43,7 @@ public class ForumController {
         return CategoryDTOMapper.mapToCategoryDTO(forumService.getCategory(new CategoryId(categoryId)));
     }
 
-    @Secured(ADMINISTRATOR)
+    @Secured({MODERATOR, ADMINISTRATOR})
     @PostMapping(value = "categories")
     public MessageDTO createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO) {
         return MessageDTO.fromId(forumService.createCategory(mapToCategory(createCategoryDTO)));

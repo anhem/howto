@@ -1,6 +1,7 @@
 # Howto
 
-This project is used as an example of how to build and structure a Spring Boot application with REST endpoints and Spring Security
+This project is used as an example of how to build and structure a Spring Boot application with REST endpoints and
+Spring Security
 
 ## Structure
 
@@ -87,8 +88,13 @@ password: superSecret1!
 ```
 
 ```
-username: user
+username: moderator
 password: superSecret2!
+```
+
+```
+username: user
+password: superSecret3!
 ```
 
 ### Swagger
