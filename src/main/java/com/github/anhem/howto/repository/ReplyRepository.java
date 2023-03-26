@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -50,13 +49,7 @@ public class ReplyRepository extends JdbcRepository {
                 .addValue("body", reply.getBody())
                 .addValue("created", Timestamp.from(reply.getCreated()))
                 .addValue("lastUpdated", Timestamp.from(reply.getLastUpdated()));
-        KeyHolder keyHolder = createKeyHolder();
-
-        namedParameterJdbcTemplate.update(INSERT_REPLY, parameters, keyHolder, new String[]{"reply_id"});
-
-        ReplyId replyId = new ReplyId(extractNumberId(keyHolder));
-        log.info("Post {} created", replyId);
-        return replyId;
+        return insert(INSERT_REPLY, parameters, ReplyId.class);
     }
 
     public void removeReply(ReplyId ReplyId) {

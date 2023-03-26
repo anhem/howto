@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -51,13 +50,7 @@ public class PostRepository extends JdbcRepository {
                 .addValue("body", post.getBody())
                 .addValue("created", Timestamp.from(post.getCreated()))
                 .addValue("lastUpdated", Timestamp.from(post.getLastUpdated()));
-        KeyHolder keyHolder = createKeyHolder();
-
-        namedParameterJdbcTemplate.update(INSERT_POST, parameters, keyHolder, new String[]{"post_id"});
-
-        PostId postId = new PostId(extractNumberId(keyHolder));
-        log.info("Post {} - {} created", postId, post.getTitle());
-        return postId;
+        return insert(INSERT_POST, parameters, PostId.class);
     }
 
     public void removePost(PostId postId) {

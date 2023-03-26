@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -77,13 +76,7 @@ public class AccountRepository extends JdbcRepository {
                 .addValue("lastName", account.getLastName())
                 .addValue("created", Timestamp.from(account.getCreated()))
                 .addValue("lastUpdated", Timestamp.from(account.getLastUpdated()));
-        KeyHolder keyHolder = createKeyHolder();
-
-        namedParameterJdbcTemplate.update(INSERT_ACCOUNT, parameters, keyHolder, new String[]{"account_id"});
-
-        AccountId accountId = new AccountId(extractNumberId(keyHolder));
-        log.info("Account {} created", account);
-        return accountId;
+        return insert(INSERT_ACCOUNT, parameters, AccountId.class);
     }
 
 

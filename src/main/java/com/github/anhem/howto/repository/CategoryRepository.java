@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
@@ -47,13 +46,7 @@ public class CategoryRepository extends JdbcRepository {
                 .addValue("description", category.getDescription())
                 .addValue("created", Timestamp.from(category.getCreated()))
                 .addValue("lastUpdated", Timestamp.from(category.getLastUpdated()));
-        KeyHolder keyHolder = createKeyHolder();
-
-        namedParameterJdbcTemplate.update(INSERT_CATEGORY, parameters, keyHolder, new String[]{"category_id"});
-
-        CategoryId categoryId = new CategoryId(extractNumberId(keyHolder));
-        log.info("Category {} - {} created", categoryId, category.getName());
-        return categoryId;
+        return insert(INSERT_CATEGORY, parameters, CategoryId.class);
     }
 
     public void removeCategory(CategoryId categoryId) {
