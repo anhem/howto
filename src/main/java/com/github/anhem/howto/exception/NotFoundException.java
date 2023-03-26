@@ -1,19 +1,17 @@
 package com.github.anhem.howto.exception;
 
 import com.github.anhem.howto.model.RoleName;
-import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.Username;
+import com.github.anhem.howto.model.id.Id;
 
 public class NotFoundException extends RuntimeException {
-    public NotFoundException(AccountId accountId) {
-        super(String.format("Account with %s could not be found", accountId));
-    }
 
-    public NotFoundException(Username username) {
-        super(String.format("Account with %s could not be found", username));
+    private static final String NOT_FOUND_MESSAGE = "%s could not be found";
+
+    public NotFoundException(Id<?> id) {
+        super(String.format(NOT_FOUND_MESSAGE, id));
     }
 
     public NotFoundException(RoleName roleName) {
-        super(String.format("Role with %s could not be found", roleName));
+        super(String.format(NOT_FOUND_MESSAGE, roleName));
     }
 }

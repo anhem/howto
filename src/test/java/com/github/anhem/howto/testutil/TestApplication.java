@@ -28,10 +28,13 @@ public abstract class TestApplication {
 
     private static final String ADMIN_USERNAME = "admin";
     private static final String ADMIN_PASSWORD = "superSecret1!";
+    private static final String MODERATOR_USERNAME = "moderator";
+    private static final String MODERATOR_PASSWORD = "superSecret2!";
     private static final String USER_USERNAME = "user";
-    private static final String USER_PASSWORD = "superSecret2!";
+    private static final String USER_PASSWORD = "superSecret3!";
 
     protected JwtToken adminJwtToken;
+    protected JwtToken moderatorJwtToken;
     protected JwtToken userJwtToken;
 
     private static final String AUTHENTICATE_URL = "/api/auth/authenticate";
@@ -56,6 +59,9 @@ public abstract class TestApplication {
     void setUp() {
         if (adminJwtToken == null) {
             adminJwtToken = authenticate(ADMIN_USERNAME, ADMIN_PASSWORD);
+        }
+        if (moderatorJwtToken == null) {
+            moderatorJwtToken = authenticate(MODERATOR_USERNAME, MODERATOR_PASSWORD);
         }
         if (userJwtToken == null) {
             userJwtToken = authenticate(USER_USERNAME, USER_PASSWORD);

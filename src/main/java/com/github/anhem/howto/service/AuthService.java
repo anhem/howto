@@ -4,6 +4,7 @@ import com.github.anhem.howto.configuration.HowtoConfig;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.AccountPassword;
 import com.github.anhem.howto.model.RoleName;
+import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.model.id.Username;
 import com.github.anhem.howto.repository.AccountPasswordRepository;
@@ -72,5 +73,14 @@ public class AuthService implements UserDetailsService {
                 userDetails.getAuthorities());
         authentication.setDetails(webAuthenticationDetails);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public AccountId getAccountId() {
+        UserDetails userDetails = getUserDetailsFromSecurityContext();
+        return accountRepository.getAccount(new Username(userDetails.getUsername())).getAccountId();
+    }
+
+    private static UserDetails getUserDetailsFromSecurityContext() {
+        return (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
