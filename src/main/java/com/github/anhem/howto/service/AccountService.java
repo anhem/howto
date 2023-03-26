@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +51,9 @@ public class AccountService {
     }
 
     public List<Account> getAccounts(Set<AccountId> accountIds) {
+        if (accountIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         return accountRepository.getAccounts(accountIds);
     }
 

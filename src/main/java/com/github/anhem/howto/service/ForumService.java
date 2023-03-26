@@ -84,9 +84,9 @@ public class ForumService {
     }
 
     @Transactional
-    public void removeReply(PostId postId, ReplyId replyId) {
+    public void removeReply(ReplyId replyId) {
         Reply reply = replyRepository.getReply(replyId);
         replyRepository.removeReply(replyId);
-        log.info("{} removed from {}", reply, postId);
+        log.info("{} removed", reply);
     }
 }

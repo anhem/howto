@@ -78,11 +78,11 @@ public class ForumAggregator {
         return MessageDTO.fromId(forumService.createReply(mapToReply(createReplyDTO, accountId)));
     }
 
-    public void removeReply(PostId postId, ReplyId replyId) {
+    public void removeReply(ReplyId replyId) {
         AccountId accountId = authService.getAccountId();
         Reply reply = forumService.getReply(replyId);
         if (reply.getAccountId().equals(accountId)) {
-            forumService.removeReply(postId, replyId);
+            forumService.removeReply(replyId);
         } else {
             throw new ForbiddenException();
         }

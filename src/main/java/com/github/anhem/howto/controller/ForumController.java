@@ -81,9 +81,9 @@ public class ForumController {
         return forumAggregator.createReply(createReplyDTO);
     }
 
-    @DeleteMapping("posts/{postId}/replies/{replyId}")
-    public MessageDTO createReply(@PathVariable Integer postId, @PathVariable Integer replyId) {
-        forumAggregator.removeReply(new PostId(postId), new ReplyId(replyId));
+    @DeleteMapping("/replies/{replyId}")
+    public MessageDTO removeReply(@PathVariable Integer replyId) {
+        forumAggregator.removeReply(new ReplyId(replyId));
         return MessageDTO.OK;
     }
 }

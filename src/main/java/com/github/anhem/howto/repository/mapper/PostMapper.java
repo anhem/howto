@@ -15,8 +15,8 @@ public class PostMapper {
                 .postId(new PostId(rs.getInt("post_id")))
                 .categoryId(new CategoryId(rs.getInt("category_id")))
                 .accountId(new AccountId(rs.getInt("account_id")))
-                .title(rs.getString("name"))
-                .body(rs.getString("description"))
+                .title(rs.getString("title"))
+                .body(rs.getString("body"))
                 .created(rs.getTimestamp("created").toInstant())
                 .lastUpdated(rs.getTimestamp("last_updated").toInstant())
                 .build();

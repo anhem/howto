@@ -15,7 +15,7 @@ public class ReplyMapper {
                 .replyId(new ReplyId(rs.getInt("reply_id")))
                 .postId(new PostId(rs.getInt("post_id")))
                 .accountId(new AccountId(rs.getInt("account_id")))
-                .body(rs.getString("description"))
+                .body(rs.getString("body"))
                 .created(rs.getTimestamp("created").toInstant())
                 .lastUpdated(rs.getTimestamp("last_updated").toInstant())
                 .build();

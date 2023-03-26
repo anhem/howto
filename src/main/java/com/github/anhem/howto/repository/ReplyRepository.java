@@ -24,7 +24,7 @@ public class ReplyRepository extends JdbcRepository {
     private static final String SELECT_POST_BY_ID = "SELECT * FROM reply WHERE reply_id = :replyId";
     private static final String DELETE_REPLY = "DELETE FROM reply WHERE reply_id = :replyId";
     private static final String DELETE_REPLIES = "DELETE FROM reply WHERE post_id = :postId";
-    private static final String INSERT_REPLY = "INSERT INTO reply(reply_id, post_id, account_id, body, created, last_updated) VALUES (:replyId, :accountId, :body, :created, :last_updated)";
+    private static final String INSERT_REPLY = "INSERT INTO reply(post_id, account_id, body, created, last_updated) VALUES (:postId, :accountId, :body, :created, :lastUpdated)";
 
     protected ReplyRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(namedParameterJdbcTemplate);
@@ -44,7 +44,7 @@ public class ReplyRepository extends JdbcRepository {
     }
 
     public ReplyId createReply(Reply reply) {
-        MapSqlParameterSource parameters = createParameters("replyId", reply.getReplyId().value())
+        MapSqlParameterSource parameters = createParameters()
                 .addValue("postId", reply.getPostId().value())
                 .addValue("accountId", reply.getAccountId().value())
                 .addValue("body", reply.getBody())
