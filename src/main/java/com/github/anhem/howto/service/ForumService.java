@@ -18,8 +18,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class ForumService {
-
     private final CategoryRepository categoryRepository;
+
     private final PostRepository postRepository;
     private final ReplyRepository replyRepository;
 
@@ -32,6 +32,10 @@ public class ForumService {
 
     public List<Category> getCategories() {
         return categoryRepository.getCategories();
+    }
+
+    public Category getCategory(CategoryId categoryId) {
+        return categoryRepository.getCategory(categoryId);
     }
 
     @Transactional

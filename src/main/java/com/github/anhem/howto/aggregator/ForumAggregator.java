@@ -22,6 +22,7 @@ import static com.github.anhem.howto.controller.mapper.CreatePostDTOMapper.mapTo
 import static com.github.anhem.howto.controller.mapper.CreateReplyDTOMapper.mapToReply;
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTO;
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTOs;
+import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTO;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTOs;
 
 @Component
@@ -71,6 +72,12 @@ public class ForumAggregator {
         List<Account> accounts = accountService.getAccounts(getAccountIdSet(replies));
 
         return mapToReplyDTOs(replies, accounts);
+    }
+
+    public ReplyDTO getReply(ReplyId replyId) {
+        Reply reply = forumService.getReply(replyId);
+        List<Account> accounts = accountService.getAccounts(Set.of(reply.getAccountId()));
+        return mapToReplyDTO(reply, accounts);
     }
 
     public MessageDTO createReply(CreateReplyDTO createReplyDTO) {

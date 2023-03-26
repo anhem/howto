@@ -16,7 +16,7 @@ public class ReplyDTOMapper {
                 .collect(Collectors.toList());
     }
 
-    private static ReplyDTO mapToReplyDTO(Reply reply, List<Account> accounts) {
+    public static ReplyDTO mapToReplyDTO(Reply reply, List<Account> accounts) {
         AccountId accountId = accounts.stream()
                 .filter(account -> account.getAccountId().equals(reply.getAccountId()))
                 .findFirst()

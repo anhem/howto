@@ -1,6 +1,7 @@
 package com.github.anhem.howto.controller;
 
 import com.github.anhem.howto.aggregator.ForumAggregator;
+import com.github.anhem.howto.controller.mapper.CategoryDTOMapper;
 import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.model.id.CategoryId;
 import com.github.anhem.howto.model.id.PostId;
@@ -34,6 +35,11 @@ public class ForumController {
     @GetMapping("categories")
     public List<CategoryDTO> getCategories() {
         return mapToCategoryDTOs(forumService.getCategories());
+    }
+
+    @GetMapping("categories/{categoryId}")
+    public CategoryDTO getCategory(@PathVariable Integer categoryId) {
+        return CategoryDTOMapper.mapToCategoryDTO(forumService.getCategory(new CategoryId(categoryId)));
     }
 
     @Secured(ADMINISTRATOR)
@@ -79,6 +85,11 @@ public class ForumController {
     @PostMapping("posts/{postId}/replies")
     public MessageDTO createReply(@Valid @RequestBody CreateReplyDTO createReplyDTO) {
         return forumAggregator.createReply(createReplyDTO);
+    }
+
+    @GetMapping("/replies/{replyId}")
+    public ReplyDTO getReply(@PathVariable Integer replyId) {
+        return forumAggregator.getReply(new ReplyId(replyId));
     }
 
     @DeleteMapping("/replies/{replyId}")

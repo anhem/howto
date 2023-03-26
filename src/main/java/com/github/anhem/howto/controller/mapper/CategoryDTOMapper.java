@@ -14,7 +14,7 @@ public class CategoryDTOMapper {
                 .collect(Collectors.toList());
     }
 
-    private static CategoryDTO mapToCategoryDTO(Category category) {
+    public static CategoryDTO mapToCategoryDTO(Category category) {
         return CategoryDTO.builder()
                 .categoryId(category.getCategoryId().value())
                 .name(category.getName())
