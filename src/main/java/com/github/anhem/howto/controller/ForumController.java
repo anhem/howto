@@ -57,7 +57,7 @@ public class ForumController {
         return MessageDTO.OK;
     }
 
-    @GetMapping("posts/category/{categoryId}")
+    @GetMapping("categories/{categoryId}/posts")
     public List<PostDTO> getPosts(@PathVariable Integer categoryId) {
         return forumAggregator.getPosts(new CategoryId(categoryId));
     }
@@ -66,7 +66,6 @@ public class ForumController {
     public PostDTO getPost(@PathVariable Integer postId) {
         return forumAggregator.getPost(new PostId(postId));
     }
-
 
     @PostMapping("posts")
     public MessageDTO createPost(@Valid @RequestBody CreatePostDTO createPostDTO) {
@@ -84,17 +83,17 @@ public class ForumController {
         return forumAggregator.getReplies(new PostId(postId));
     }
 
-    @PostMapping("posts/{postId}/replies")
-    public MessageDTO createReply(@Valid @RequestBody CreateReplyDTO createReplyDTO) {
-        return forumAggregator.createReply(createReplyDTO);
-    }
-
-    @GetMapping("/replies/{replyId}")
+    @GetMapping("replies/{replyId}")
     public ReplyDTO getReply(@PathVariable Integer replyId) {
         return forumAggregator.getReply(new ReplyId(replyId));
     }
 
-    @DeleteMapping("/replies/{replyId}")
+    @PostMapping("replies")
+    public MessageDTO createReply(@Valid @RequestBody CreateReplyDTO createReplyDTO) {
+        return forumAggregator.createReply(createReplyDTO);
+    }
+
+    @DeleteMapping("replies/{replyId}")
     public MessageDTO removeReply(@PathVariable Integer replyId) {
         forumAggregator.removeReply(new ReplyId(replyId));
         return MessageDTO.OK;

@@ -19,9 +19,9 @@ class ForumControllerIT extends TestApplication {
     private static final String GET_CATEGORIES_URL = "/api/forum/categories";
     private static final String CATEGORY_URL = "/api/forum/categories/%d";
     private static final String CREATE_POST_URL = "/api/forum/posts";
-    private static final String GET_POSTS_URL = "/api/forum/posts/category/%d";
+    private static final String GET_POSTS_URL = "/api/forum/categories/%d/posts";
     private static final String POST_URL = "/api/forum/posts/%d";
-    private static final String CREATE_REPLY_URL = "/api/forum/posts/%d/replies";
+    private static final String CREATE_REPLY_URL = "/api/forum/replies";
     private static final String GET_REPLIES_URL = "/api/forum/posts/%d/replies";
     private static final String REPLY_URL = "/api/forum/replies/%d";
 
