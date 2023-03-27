@@ -16,4 +16,5 @@ public class ReplyDTO {
     String username;
     String body;
     Instant created;
+    Instant updated;
 }

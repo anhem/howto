@@ -39,12 +39,15 @@ class ForumControllerIT extends TestApplication {
     }
 
     @Test
-    void postCrd() {
+    void postCrud() {
         int categoryId = createCategory();
         int postId = createPost(categoryId);
 
         assertAndGetPost(postId, true);
         assertThat(findPostDTO(postId, getPosts(categoryId))).isPresent();
+
+        PostDTO updatedPostDTO = updatePost(postId);
+        assertThat(assertAndGetPost(postId, true)).isEqualTo(Optional.of(updatedPostDTO));
 
         deletePost(postId);
 
@@ -53,12 +56,15 @@ class ForumControllerIT extends TestApplication {
     }
 
     @Test
-    void replyCrd() {
+    void replyCrud() {
         int postId = createPost(createCategory());
         int replyId = createReply(postId);
 
         assertAndGetReply(replyId, true);
         assertThat(findReplyDTO(replyId, getReplies(postId))).isPresent();
+
+        ReplyDTO updatedReplyDTO = updateReply(replyId);
+        assertThat(assertAndGetReply(replyId, true)).isEqualTo(Optional.of(updatedReplyDTO));
 
         deleteReply(replyId);
 
@@ -184,6 +190,15 @@ class ForumControllerIT extends TestApplication {
         return postId;
     }
 
+    private PostDTO updatePost(int postId) {
+        UpdatePostDTO updatePostDTO = populate(UpdatePostDTO.class);
+        ResponseEntity<PostDTO> response = putWithToken(String.format(POST_URL, postId), updatePostDTO, PostDTO.class, userJwtToken);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getUpdated()).isNotNull();
+        return response.getBody();
+    }
+
     private List<PostDTO> getPosts(int categoryId) {
         ResponseEntity<PostDTO[]> response = getWithToken(String.format(GET_POSTS_URL, categoryId), PostDTO[].class, userJwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -231,6 +246,15 @@ class ForumControllerIT extends TestApplication {
         int replyId = Integer.parseInt(response.getBody().getMessage());
         assertThat(replyId).isGreaterThan(0);
         return replyId;
+    }
+
+    private ReplyDTO updateReply(int replyId) {
+        UpdateReplyDTO updateReplyDTO = populate(UpdateReplyDTO.class);
+        ResponseEntity<ReplyDTO> response = putWithToken(String.format(REPLY_URL, replyId), updateReplyDTO, ReplyDTO.class, userJwtToken);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getUpdated()).isNotNull();
+        return response.getBody();
     }
 
     private List<ReplyDTO> getReplies(int postId) {

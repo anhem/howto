@@ -29,6 +29,7 @@ public class ReplyDTOMapper {
                 .username(username.value())
                 .body(reply.getBody())
                 .created(reply.getCreated())
+                .updated(reply.getLastUpdated())
                 .build();
     }
 }

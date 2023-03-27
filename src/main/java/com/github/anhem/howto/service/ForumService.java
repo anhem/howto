@@ -66,6 +66,12 @@ public class ForumService {
     }
 
     @Transactional
+    public Post updatePost(Post post) {
+        postRepository.updatePost(post);
+        return postRepository.getPost(post.getPostId());
+    }
+
+    @Transactional
     public void removePost(PostId postId) {
         Post post = postRepository.getPost(postId);
         replyRepository.removeReplies(postId);
@@ -91,5 +97,11 @@ public class ForumService {
         Reply reply = replyRepository.getReply(replyId);
         replyRepository.removeReply(replyId);
         log.info("{} removed", reply);
+    }
+
+    @Transactional
+    public Reply updateReply(Reply reply) {
+        replyRepository.updateReply(reply);
+        return replyRepository.getReply(reply.getReplyId());
     }
 }

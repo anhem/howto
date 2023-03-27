@@ -79,6 +79,10 @@ public abstract class TestApplication {
         return testRestTemplate.exchange(url, HttpMethod.POST, withJwtToken(body, jwtToken), responseType);
     }
 
+    protected <T, B> ResponseEntity<T> putWithToken(String url, B body, Class<T> responseType, JwtToken jwtToken) {
+        return testRestTemplate.exchange(url, HttpMethod.PUT, withJwtToken(body, jwtToken), responseType);
+    }
+
     protected <T> ResponseEntity<T> deleteWithToken(String url, Class<T> responseType, JwtToken jwtToken) {
         return testRestTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(withJwtToken(jwtToken)), responseType);
     }

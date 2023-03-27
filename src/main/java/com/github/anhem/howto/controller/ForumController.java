@@ -72,6 +72,11 @@ public class ForumController {
         return forumAggregator.createPost(createPostDTO);
     }
 
+    @PutMapping("posts/{postId}")
+    public PostDTO updatePost(@PathVariable Integer postId, @Valid @RequestBody UpdatePostDTO updatePostDTO) {
+        return forumAggregator.updatePost(new PostId(postId), updatePostDTO);
+    }
+
     @DeleteMapping("posts/{postId}")
     public MessageDTO removePost(@PathVariable Integer postId) {
         forumAggregator.removePost(new PostId(postId));
@@ -91,6 +96,11 @@ public class ForumController {
     @PostMapping("replies")
     public MessageDTO createReply(@Valid @RequestBody CreateReplyDTO createReplyDTO) {
         return forumAggregator.createReply(createReplyDTO);
+    }
+
+    @PutMapping("replies/{replyId}")
+    public ReplyDTO updateReply(@PathVariable Integer replyId, @Valid @RequestBody UpdateReplyDTO updateReplyDTO) {
+        return forumAggregator.updateReply(new ReplyId(replyId), updateReplyDTO);
     }
 
     @DeleteMapping("replies/{replyId}")

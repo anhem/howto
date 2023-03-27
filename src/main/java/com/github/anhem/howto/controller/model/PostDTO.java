@@ -17,4 +17,5 @@ public class PostDTO {
     String title;
     String body;
     Instant created;
+    Instant updated;
 }

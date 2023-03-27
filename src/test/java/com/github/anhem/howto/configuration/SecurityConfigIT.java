@@ -23,6 +23,7 @@ class SecurityConfigIT extends TestApplication {
 
     private static final List<String> GET_URL_WHITELIST = List.of("/v3/api-docs", "/v3/api-docs/swagger-config");
     private static final List<String> POST_URL_WHITELIST = List.of("/api/auth/authenticate");
+    private static final List<String> PUT_URL_WHITELIST = List.of();
     private static final List<String> DELETE_URL_WHITELIST = List.of();
     public static final String VALIDATION_ERROR_MESSAGE = "%s on %s does not return %s. Either this url should be protected or it should be added to %s";
 
@@ -43,6 +44,7 @@ class SecurityConfigIT extends TestApplication {
             switch (requestMethod.name()) {
                 case "GET" -> assertGetForbidden(pathPattern);
                 case "POST" -> assertPostForbidden(pathPattern);
+                case "PUT" -> assertPutForbidden(pathPattern);
                 case "DELETE" -> assertDeleteForbidden(pathPattern);
                 default -> fail(String.format("%s not implemented", requestMethod.name()));
             }
@@ -68,6 +70,17 @@ class SecurityConfigIT extends TestApplication {
                     .isEqualTo(HttpStatus.FORBIDDEN);
         } else {
             log.info("POST on {} is whitelisted, skipping", url);
+        }
+    }
+
+    private void assertPutForbidden(PathPattern pathPattern) {
+        String url = pathPattern.getPatternString();
+        if (!PUT_URL_WHITELIST.contains(url)) {
+            assertThat(testRestTemplate.exchange(cleanUrl(url), HttpMethod.PUT, null, Object.class).getStatusCode())
+                    .as(String.format(VALIDATION_ERROR_MESSAGE, "PUT", url, HttpStatus.FORBIDDEN, "PUT_URL_WHITELIST"))
+                    .isEqualTo(HttpStatus.FORBIDDEN);
+        } else {
+            log.info("PUT on {} is whitelisted, skipping", url);
         }
     }
 

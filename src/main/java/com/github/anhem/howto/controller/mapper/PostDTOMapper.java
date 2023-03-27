@@ -32,6 +32,7 @@ public class PostDTOMapper {
                 .title(post.getTitle())
                 .body(post.getBody())
                 .created(post.getCreated())
+                .updated(post.getLastUpdated())
                 .build();
     }
 }

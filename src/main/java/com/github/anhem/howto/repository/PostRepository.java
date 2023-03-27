@@ -23,6 +23,7 @@ public class PostRepository extends JdbcRepository {
     private static final String SELECT_POST_BY_ID = "SELECT * FROM post WHERE post_id = :postId";
     private static final String DELETE_POST = "DELETE FROM post WHERE post_id = :postId";
     private static final String INSERT_POST = "INSERT INTO post(category_id, account_id, title, body, created, last_updated) VALUES (:categoryId, :accountId, :title, :body, :created, :lastUpdated)";
+    private static final String UPDATE_POST = "UPDATE post SET title = :title, body = :body, last_updated = :lastUpdated WHERE post_id = :postId";
 
     protected PostRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(namedParameterJdbcTemplate);
@@ -53,10 +54,17 @@ public class PostRepository extends JdbcRepository {
         return insert(INSERT_POST, parameters, PostId.class);
     }
 
+    public void updatePost(Post post) {
+        MapSqlParameterSource parameters = createParameters("postId", post.getPostId().value())
+                .addValue("title", post.getTitle())
+                .addValue("body", post.getBody())
+                .addValue("lastUpdated", Timestamp.from(post.getLastUpdated()));
+        namedParameterJdbcTemplate.update(UPDATE_POST, parameters);
+    }
+
     public void removePost(PostId postId) {
         MapSqlParameterSource parameters = createParameters("postId", postId.value());
         namedParameterJdbcTemplate.update(DELETE_POST, parameters);
         log.info("Post {} removed", postId);
     }
-
 }

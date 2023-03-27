@@ -1,5 +1,9 @@
 package com.github.anhem.howto.aggregator;
 
+import com.github.anhem.howto.controller.mapper.CreatePostDTOMapper;
+import com.github.anhem.howto.controller.mapper.CreateReplyDTOMapper;
+import com.github.anhem.howto.controller.mapper.UpdatePostDTOMapper;
+import com.github.anhem.howto.controller.mapper.UpdateReplyDTOMapper;
 import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.exception.ForbiddenException;
 import com.github.anhem.howto.model.Account;
@@ -18,8 +22,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.github.anhem.howto.controller.mapper.CreatePostDTOMapper.mapToPost;
-import static com.github.anhem.howto.controller.mapper.CreateReplyDTOMapper.mapToReply;
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTO;
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTOs;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTO;
@@ -43,7 +45,7 @@ public class ForumAggregator {
 
     public List<PostDTO> getPosts(CategoryId categoryId) {
         List<Post> posts = forumService.getPosts(categoryId);
-        List<Account> accounts = accountService.getAccounts(getAccountIds(posts));
+        List<Account> accounts = accountService.getAccounts(getAccountIdsFromPosts(posts));
 
         return mapToPostDTOs(posts, accounts);
     }
@@ -57,22 +59,25 @@ public class ForumAggregator {
 
     public MessageDTO createPost(CreatePostDTO createPostDTO) {
         AccountId accountId = authService.getLoggedInAccountId();
-        return fromId(forumService.createPost(mapToPost(createPostDTO, accountId)));
+        return fromId(forumService.createPost(CreatePostDTOMapper.mapToPost(createPostDTO, accountId)));
+    }
+
+    public PostDTO updatePost(PostId postId, UpdatePostDTO updatePostDTO) {
+        Post post = forumService.getPost(postId);
+        checkAuthorized(post.getAccountId());
+        Account account = accountService.getAccount(post.getAccountId());
+        return mapToPostDTO(forumService.updatePost(UpdatePostDTOMapper.mapToPost(updatePostDTO, post)), List.of(account));
     }
 
     public void removePost(PostId postId) {
-        AccountId accountId = authService.getLoggedInAccountId();
         Post post = forumService.getPost(postId);
-        if (post.getAccountId().equals(accountId) || authService.loggedInAccountHasAnyOf(List.of(MODERATOR, ADMINISTRATOR))) {
-            forumService.removePost(postId);
-        } else {
-            throw new ForbiddenException();
-        }
+        checkAuthorized(post.getAccountId());
+        forumService.removePost(postId);
     }
 
     public List<ReplyDTO> getReplies(PostId postId) {
         List<Reply> replies = forumService.getReplies(postId);
-        List<Account> accounts = accountService.getAccounts(getAccountIdSet(replies));
+        List<Account> accounts = accountService.getAccounts(getAccountIdFromReplies(replies));
 
         return mapToReplyDTOs(replies, accounts);
     }
@@ -85,26 +90,35 @@ public class ForumAggregator {
 
     public MessageDTO createReply(CreateReplyDTO createReplyDTO) {
         AccountId accountId = authService.getLoggedInAccountId();
-        return fromId(forumService.createReply(mapToReply(createReplyDTO, accountId)));
+        return fromId(forumService.createReply(CreateReplyDTOMapper.mapToReply(createReplyDTO, accountId)));
+    }
+
+    public ReplyDTO updateReply(ReplyId replyId, UpdateReplyDTO updateReplyDTO) {
+        Reply reply = forumService.getReply(replyId);
+        checkAuthorized(reply.getAccountId());
+        Account account = accountService.getAccount(reply.getAccountId());
+        return mapToReplyDTO(forumService.updateReply(UpdateReplyDTOMapper.mapToReply(updateReplyDTO, reply)), List.of(account));
     }
 
     public void removeReply(ReplyId replyId) {
-        AccountId accountId = authService.getLoggedInAccountId();
         Reply reply = forumService.getReply(replyId);
-        if (reply.getAccountId().equals(accountId) || authService.loggedInAccountHasAnyOf(List.of(MODERATOR, ADMINISTRATOR))) {
-            forumService.removeReply(replyId);
-        } else {
+        checkAuthorized(reply.getAccountId());
+        forumService.removeReply(replyId);
+    }
+
+    private void checkAuthorized(AccountId accountId) {
+        if (!accountId.equals(authService.getLoggedInAccountId()) && !authService.loggedInAccountHasAnyOf(List.of(MODERATOR, ADMINISTRATOR))) {
             throw new ForbiddenException();
         }
     }
 
-    private static Set<AccountId> getAccountIds(List<Post> posts) {
+    private Set<AccountId> getAccountIdsFromPosts(List<Post> posts) {
         return posts.stream()
                 .map(Post::getAccountId)
                 .collect(Collectors.toSet());
     }
 
-    private static Set<AccountId> getAccountIdSet(List<Reply> replies) {
+    private Set<AccountId> getAccountIdFromReplies(List<Reply> replies) {
         return replies.stream()
                 .map(Reply::getAccountId)
                 .collect(Collectors.toSet());
