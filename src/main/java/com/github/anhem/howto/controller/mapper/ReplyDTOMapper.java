@@ -3,7 +3,7 @@ package com.github.anhem.howto.controller.mapper;
 import com.github.anhem.howto.controller.model.ReplyDTO;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.Reply;
-import com.github.anhem.howto.model.id.AccountId;
+import com.github.anhem.howto.model.id.Username;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,15 +17,16 @@ public class ReplyDTOMapper {
     }
 
     public static ReplyDTO mapToReplyDTO(Reply reply, List<Account> accounts) {
-        AccountId accountId = accounts.stream()
+        Username username = accounts.stream()
                 .filter(account -> account.getAccountId().equals(reply.getAccountId()))
                 .findFirst()
-                .map(Account::getAccountId)
-                .orElse(AccountId.UNKNOWN_ACCOUNT_ID);
+                .map(Account::getUsername)
+                .orElse(Username.UNKNOWN);
 
         return ReplyDTO.builder()
                 .replyId(reply.getReplyId().value())
-                .accountId(accountId.value())
+                .postId(reply.getPostId().value())
+                .username(username.value())
                 .body(reply.getBody())
                 .created(reply.getCreated())
                 .build();

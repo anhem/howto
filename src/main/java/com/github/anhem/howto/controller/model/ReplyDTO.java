@@ -12,7 +12,8 @@ import java.time.Instant;
 public class ReplyDTO {
 
     Integer replyId;
-    Integer accountId;
+    Integer postId;
+    String username;
     String body;
     Instant created;
 }

@@ -13,7 +13,7 @@ public class PostDTO {
 
     Integer postId;
     Integer categoryId;
-    String authorUsername;
+    String username;
     String title;
     String body;
     Instant created;

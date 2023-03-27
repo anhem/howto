@@ -28,7 +28,7 @@ public class PostDTOMapper {
         return PostDTO.builder()
                 .postId(post.getPostId().value())
                 .categoryId(post.getCategoryId().value())
-                .authorUsername(username.value())
+                .username(username.value())
                 .title(post.getTitle())
                 .body(post.getBody())
                 .created(post.getCreated())
