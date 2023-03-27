@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class CategoryDTO {
 
-    int categoryId;
+    Integer categoryId;
     String name;
     String description;
 }

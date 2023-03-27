@@ -12,7 +12,7 @@ import java.util.List;
 @Jacksonized
 public class AccountsDTO {
 
-    int accountCount;
+    Integer accountCount;
     @Singular
     List<AccountDTO> accounts;
 }

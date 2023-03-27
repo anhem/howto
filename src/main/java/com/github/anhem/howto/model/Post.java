@@ -10,7 +10,7 @@ import lombok.Value;
 import java.time.Instant;
 
 @Value
-@Builder
+@Builder(toBuilder = true)
 public class Post {
 
     @NonNull

@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class AccountDTO {
 
-    int id;
+    Integer id;
     String username;
     String email;
     String firstName;

@@ -11,7 +11,8 @@ import java.time.Instant;
 @Jacksonized
 public class PostDTO {
 
-    int postId;
+    Integer postId;
+    Integer categoryId;
     String authorUsername;
     String title;
     String body;
