@@ -83,13 +83,19 @@ public class ForumService {
         return replyRepository.getReplies(postId);
     }
 
+    public Reply getReply(ReplyId replyId) {
+        return replyRepository.getReply(replyId);
+    }
+
     @Transactional
     public ReplyId createReply(Reply reply) {
         return replyRepository.createReply(reply);
     }
 
-    public Reply getReply(ReplyId replyId) {
-        return replyRepository.getReply(replyId);
+    @Transactional
+    public Reply updateReply(Reply reply) {
+        replyRepository.updateReply(reply);
+        return replyRepository.getReply(reply.getReplyId());
     }
 
     @Transactional
@@ -97,11 +103,5 @@ public class ForumService {
         Reply reply = replyRepository.getReply(replyId);
         replyRepository.removeReply(replyId);
         log.info("{} removed", reply);
-    }
-
-    @Transactional
-    public Reply updateReply(Reply reply) {
-        replyRepository.updateReply(reply);
-        return replyRepository.getReply(reply.getReplyId());
     }
 }
