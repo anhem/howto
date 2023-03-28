@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.fail;
 class SecurityConfigIT extends TestApplication {
 
     private static final List<String> GET_URL_WHITELIST = List.of("/swagger-ui.html", "/v3/api-docs", "/v3/api-docs/swagger-config", "/api/hello-world");
+    private static final List<String> PATCH_URL_WHITELIST = List.of();
     private static final List<String> POST_URL_WHITELIST = List.of("/api/auth/authenticate");
     private static final List<String> PUT_URL_WHITELIST = List.of();
     private static final List<String> DELETE_URL_WHITELIST = List.of();
@@ -45,12 +46,12 @@ class SecurityConfigIT extends TestApplication {
         }
     }
 
-
     private Consumer<RequestMethod> assertEndpointForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
         return requestMethod -> {
             try {
                 switch (requestMethod.name()) {
                     case "GET" -> assertGetForbidden(pathPattern, failedEndpoints);
+                    case "PATCH" -> assertPatchForbidden(pathPattern, failedEndpoints);
                     case "POST" -> assertPostForbidden(pathPattern, failedEndpoints);
                     case "PUT" -> assertPutForbidden(pathPattern, failedEndpoints);
                     case "DELETE" -> assertDeleteForbidden(pathPattern, failedEndpoints);
@@ -72,6 +73,17 @@ class SecurityConfigIT extends TestApplication {
             }
         } else {
             log.info("GET on {} is whitelisted, skipping", url);
+        }
+    }
+
+    private void assertPatchForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
+        String url = pathPattern.getPatternString();
+        if (!PATCH_URL_WHITELIST.contains(url)) {
+            if (testRestTemplate.exchange(cleanUrl(url), HttpMethod.PATCH, null, Object.class).getStatusCode() != HttpStatus.FORBIDDEN) {
+                failedEndpoints.add(String.format(VALIDATION_ERROR_MESSAGE, "PATCH", url, HttpStatus.FORBIDDEN, "PATCH_URL_WHITELIST"));
+            }
+        } else {
+            log.info("PATCH on {} is whitelisted, skipping", url);
         }
     }
 
