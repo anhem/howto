@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Value
 @Builder
 @Jacksonized
-public class CreateCategoryDTO {
+public class UpsertCategoryDTO {
     @Size(min = 1, max = 100)
     @NotNull
     String name;

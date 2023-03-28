@@ -22,6 +22,7 @@ public class CategoryRepository extends JdbcRepository {
     private static final String SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE category_id = :categoryId";
     private static final String DELETE_CATEGORY = "DELETE FROM category WHERE category_id = :categoryId";
     private static final String INSERT_CATEGORY = "INSERT INTO category(name, description, created, last_updated) values(:name, :description, :created, :lastUpdated)";
+    private static final String UPDATE_CATEGORY = "UPDATE category SET name = :name, description = :description, last_updated = :lastUpdated WHERE category_id = :categoryId";
 
     protected CategoryRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(namedParameterJdbcTemplate);
@@ -47,6 +48,14 @@ public class CategoryRepository extends JdbcRepository {
                 .addValue("created", Timestamp.from(category.getCreated()))
                 .addValue("lastUpdated", Timestamp.from(category.getLastUpdated()));
         return insert(INSERT_CATEGORY, parameters, CategoryId.class);
+    }
+
+    public void updateCategory(Category category) {
+        MapSqlParameterSource parameters = createParameters("categoryId", category.getCategoryId().value())
+                .addValue("name", category.getName())
+                .addValue("description", category.getDescription())
+                .addValue("lastUpdated", Timestamp.from(category.getLastUpdated()));
+        namedParameterJdbcTemplate.update(UPDATE_CATEGORY, parameters);
     }
 
     public void removeCategory(CategoryId categoryId) {

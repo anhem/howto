@@ -16,7 +16,7 @@ import java.util.List;
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER_AUTHENTICATION;
 import static com.github.anhem.howto.controller.mapper.CategoryDTOMapper.mapToCategoryDTO;
 import static com.github.anhem.howto.controller.mapper.CategoryDTOMapper.mapToCategoryDTOs;
-import static com.github.anhem.howto.controller.mapper.CreateCategoryDTOMapper.mapToCategory;
+import static com.github.anhem.howto.controller.mapper.UpsertCategoryDTOMapper.mapToCategory;
 import static com.github.anhem.howto.controller.model.MessageDTO.fromId;
 import static com.github.anhem.howto.model.RoleName.Constants.ADMINISTRATOR;
 import static com.github.anhem.howto.model.RoleName.Constants.MODERATOR;
@@ -46,8 +46,14 @@ public class ForumController {
 
     @Secured({MODERATOR, ADMINISTRATOR})
     @PostMapping(value = "categories")
-    public MessageDTO createCategory(@Valid @RequestBody CreateCategoryDTO createCategoryDTO) {
-        return fromId(forumService.createCategory(mapToCategory(createCategoryDTO)));
+    public MessageDTO createCategory(@Valid @RequestBody UpsertCategoryDTO upsertCategoryDTO) {
+        return fromId(forumService.createCategory(mapToCategory(upsertCategoryDTO)));
+    }
+
+    @Secured({MODERATOR, ADMINISTRATOR})
+    @PutMapping("categories/{categoryId}")
+    public CategoryDTO updateCategory(@PathVariable Integer categoryId, @Valid @RequestBody UpsertCategoryDTO upsertCategoryDTO) {
+        return forumAggregator.updateCategory(new CategoryId(categoryId), upsertCategoryDTO);
     }
 
     @Secured(ADMINISTRATOR)

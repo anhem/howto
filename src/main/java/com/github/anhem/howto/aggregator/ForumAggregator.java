@@ -7,6 +7,7 @@ import com.github.anhem.howto.controller.mapper.UpdateReplyDTOMapper;
 import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.exception.ForbiddenException;
 import com.github.anhem.howto.model.Account;
+import com.github.anhem.howto.model.Category;
 import com.github.anhem.howto.model.Post;
 import com.github.anhem.howto.model.Reply;
 import com.github.anhem.howto.model.id.AccountId;
@@ -22,10 +23,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.github.anhem.howto.controller.mapper.CategoryDTOMapper.mapToCategoryDTO;
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTO;
 import static com.github.anhem.howto.controller.mapper.PostDTOMapper.mapToPostDTOs;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTO;
 import static com.github.anhem.howto.controller.mapper.ReplyDTOMapper.mapToReplyDTOs;
+import static com.github.anhem.howto.controller.mapper.UpsertCategoryDTOMapper.mapToCategory;
 import static com.github.anhem.howto.controller.model.MessageDTO.fromId;
 import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
 import static com.github.anhem.howto.model.RoleName.MODERATOR;
@@ -41,6 +44,11 @@ public class ForumAggregator {
         this.forumService = forumService;
         this.accountService = accountService;
         this.authService = authService;
+    }
+
+    public CategoryDTO updateCategory(CategoryId categoryId, UpsertCategoryDTO upsertCategoryDTO) {
+        Category category = forumService.getCategory(categoryId);
+        return mapToCategoryDTO(forumService.updateCategory(mapToCategory(upsertCategoryDTO, category)));
     }
 
     public List<PostDTO> getPosts(CategoryId categoryId) {

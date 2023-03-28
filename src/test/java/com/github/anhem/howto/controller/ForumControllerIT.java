@@ -26,11 +26,16 @@ class ForumControllerIT extends TestApplication {
     private static final String REPLY_URL = "/api/forum/replies/%d";
 
     @Test
-    void categoryCrd() {
+    void categoryCrud() {
         int categoryId = createCategory();
 
-        assertAndGetCategory(categoryId, true);
+        CategoryDTO categoryDTO = assertAndGetCategory(categoryId, true).get();
         assertThat(findCategoryDTO(categoryId, getCategories())).isPresent();
+
+        CategoryDTO updatedCategoryDTO = updateCategory(categoryId);
+        assertThat(updatedCategoryDTO.getCategoryId()).isEqualTo(categoryDTO.getCategoryId());
+        assertThat(updatedCategoryDTO).isNotEqualTo(categoryDTO);
+        assertThat(updatedCategoryDTO).isEqualTo(assertAndGetCategory(categoryId, true).get());
 
         deleteCategory(categoryId);
 
@@ -43,11 +48,13 @@ class ForumControllerIT extends TestApplication {
         int categoryId = createCategory();
         int postId = createPost(categoryId);
 
-        assertAndGetPost(postId, true);
+        PostDTO postDTO = assertAndGetPost(postId, true).get();
         assertThat(findPostDTO(postId, getPosts(categoryId))).isPresent();
 
         PostDTO updatedPostDTO = updatePost(postId);
-        assertThat(assertAndGetPost(postId, true)).isEqualTo(Optional.of(updatedPostDTO));
+        assertThat(updatedPostDTO.getCategoryId()).isEqualTo(postDTO.getCategoryId());
+        assertThat(updatedPostDTO).isNotEqualTo(postDTO);
+        assertThat(updatedPostDTO).isEqualTo(assertAndGetPost(postId, true).get());
 
         deletePost(postId);
 
@@ -60,11 +67,13 @@ class ForumControllerIT extends TestApplication {
         int postId = createPost(createCategory());
         int replyId = createReply(postId);
 
-        assertAndGetReply(replyId, true);
+        ReplyDTO replyDTO = assertAndGetReply(replyId, true).get();
         assertThat(findReplyDTO(replyId, getReplies(postId))).isPresent();
 
         ReplyDTO updatedReplyDTO = updateReply(replyId);
-        assertThat(assertAndGetReply(replyId, true)).isEqualTo(Optional.of(updatedReplyDTO));
+        assertThat(updatedReplyDTO.getReplyId()).isEqualTo(replyDTO.getReplyId());
+        assertThat(updatedReplyDTO).isNotEqualTo(replyDTO);
+        assertThat(updatedReplyDTO).isEqualTo(assertAndGetReply(replyId, true).get());
 
         deleteReply(replyId);
 
@@ -85,7 +94,7 @@ class ForumControllerIT extends TestApplication {
 
     @Test
     public void userCannotCreateCategory() {
-        ResponseEntity<ErrorDTO> response = postWithToken(GET_CATEGORIES_URL, populate(CreateCategoryDTO.class), ErrorDTO.class, userJwtToken);
+        ResponseEntity<ErrorDTO> response = postWithToken(GET_CATEGORIES_URL, populate(UpsertCategoryDTO.class), ErrorDTO.class, userJwtToken);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
         assertThat(response.getBody()).isNotNull();
@@ -156,8 +165,16 @@ class ForumControllerIT extends TestApplication {
         return createCategory(adminJwtToken);
     }
 
+    private CategoryDTO updateCategory(int categoryId) {
+        UpsertCategoryDTO upsertCategoryDTO = populate(UpsertCategoryDTO.class);
+        ResponseEntity<CategoryDTO> response = putWithToken(String.format(CATEGORY_URL, categoryId), upsertCategoryDTO, CategoryDTO.class, adminJwtToken);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        return response.getBody();
+    }
+
     private int createCategory(JwtToken jwtToken) {
-        ResponseEntity<MessageDTO> response = postWithToken(GET_CATEGORIES_URL, populate(CreateCategoryDTO.class), MessageDTO.class, jwtToken);
+        ResponseEntity<MessageDTO> response = postWithToken(GET_CATEGORIES_URL, populate(UpsertCategoryDTO.class), MessageDTO.class, jwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
         int categoryId = Integer.parseInt(response.getBody().getMessage());

@@ -49,6 +49,12 @@ public class ForumService {
         return categoryRepository.createCategory(category);
     }
 
+    @Transactional
+    public Category updateCategory(Category category) {
+        categoryRepository.updateCategory(category);
+        return categoryRepository.getCategory(category.getCategoryId());
+    }
+
     public Post getPost(PostId postId) {
         return postRepository.getPost(postId);
     }
