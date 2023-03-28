@@ -15,22 +15,30 @@ import static com.github.anhem.howto.model.RoleName.Constants.*;
 @SecurityRequirement(name = BEARER_AUTHENTICATION)
 public class HelloWorldController {
 
-    public static final String HELLO_WORLD_MESSAGE = "Hello world";
-    public static final String HELLO_OTHER_WORLD_MESSAGE = "Hello other world";
+    public static final String HELLO_WORLD = "Hello world";
+    public static final String HELLO_AUTHENTICATED_USER = "Hello authenticated user";
+    public static final String HELLO_ADMINISTRATOR = "Hello administrator";
+
+    @GetMapping()
+    public MessageDTO hello() {
+        return MessageDTO.builder()
+                .message(HELLO_WORLD)
+                .build();
+    }
 
     @Secured({USER, MODERATOR, ADMINISTRATOR})
-    @GetMapping
-    public MessageDTO helloWorld() {
+    @GetMapping("authenticated")
+    public MessageDTO helloAuthenticated() {
         return MessageDTO.builder()
-                .message(HELLO_WORLD_MESSAGE)
+                .message(HELLO_AUTHENTICATED_USER)
                 .build();
     }
 
     @Secured(ADMINISTRATOR)
-    @GetMapping(value = "other")
-    public MessageDTO otherHelloWorld() {
+    @GetMapping(value = "authenticated/administrator")
+    public MessageDTO helloAdministrator() {
         return MessageDTO.builder()
-                .message(HELLO_OTHER_WORLD_MESSAGE)
+                .message(HELLO_ADMINISTRATOR)
                 .build();
     }
 }

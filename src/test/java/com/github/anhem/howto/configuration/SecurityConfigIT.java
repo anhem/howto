@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.fail;
 @Slf4j
 class SecurityConfigIT extends TestApplication {
 
-    private static final List<String> GET_URL_WHITELIST = List.of("/v3/api-docs", "/v3/api-docs/swagger-config");
+    private static final List<String> GET_URL_WHITELIST = List.of("/v3/api-docs", "/v3/api-docs/swagger-config", "/api/hello-world");
     private static final List<String> POST_URL_WHITELIST = List.of("/api/auth/authenticate");
     private static final List<String> PUT_URL_WHITELIST = List.of();
     private static final List<String> DELETE_URL_WHITELIST = List.of();
