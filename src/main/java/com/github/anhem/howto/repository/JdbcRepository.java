@@ -18,27 +18,13 @@ public abstract class JdbcRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    protected KeyHolder createKeyHolder() {
-        return new GeneratedKeyHolder();
-    }
-
-    protected MapSqlParameterSource createParameters() {
-        return new MapSqlParameterSource();
-    }
-
     protected MapSqlParameterSource createParameters(String name, Object value) {
-        return createParameters().addValue(name, value);
-    }
-
-    protected Integer extractNumberId(KeyHolder keyHolder) {
-        return Optional.ofNullable(keyHolder.getKey())
-                .map(Number::intValue)
-                .orElseThrow(() -> new RuntimeException("Failed to extract id"));
+        return new MapSqlParameterSource().addValue(name, value);
     }
 
     protected <T extends Id<Integer>> T insert(String sql, MapSqlParameterSource parameters, Class<T> returnClass) {
         try {
-            KeyHolder keyHolder = createKeyHolder();
+            KeyHolder keyHolder = new GeneratedKeyHolder();
             String primaryKeyName = getPrimaryKeyName(returnClass);
             namedParameterJdbcTemplate.update(sql, parameters, keyHolder, new String[]{primaryKeyName});
             T t = returnClass.getDeclaredConstructor(Integer.class).newInstance(extractNumberId(keyHolder));
@@ -53,5 +39,11 @@ public abstract class JdbcRepository {
         return returnClass.getSimpleName()
                 .replaceAll("(?!^)([A-Z])", "_$1")
                 .toLowerCase();
+    }
+
+    private Integer extractNumberId(KeyHolder keyHolder) {
+        return Optional.ofNullable(keyHolder.getKey())
+                .map(Number::intValue)
+                .orElseThrow(() -> new RuntimeException("Failed to extract id"));
     }
 }

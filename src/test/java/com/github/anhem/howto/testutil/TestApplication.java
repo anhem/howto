@@ -38,11 +38,10 @@ public abstract class TestApplication {
     private static final String AUTHENTICATE_URL = "/api/auth/authenticate";
 
     static final PostgreSQLContainer<?> SQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.5")
-            .withDatabaseName("howto-db-it")
-            .withReuse(true);
+            .withDatabaseName("howto-db-it");
 
     @DynamicPropertySource
-    static void registerMySQLProperties(DynamicPropertyRegistry registry) {
+    static void registerSQLProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", SQL_CONTAINER::getJdbcUrl);
         registry.add("spring.datasource.hikari.username", SQL_CONTAINER::getUsername);
         registry.add("spring.datasource.hikari.password", SQL_CONTAINER::getPassword);

@@ -69,8 +69,7 @@ public class AccountRepository extends JdbcRepository {
     }
 
     public AccountId createAccount(Account account) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("username", account.getUsername().value())
+        MapSqlParameterSource parameters = createParameters("username", account.getUsername().value())
                 .addValue("email", account.getEmail())
                 .addValue("firstName", account.getFirstName())
                 .addValue("lastName", account.getLastName())
@@ -81,8 +80,7 @@ public class AccountRepository extends JdbcRepository {
 
 
     public boolean accountExists(Username username, String email) {
-        MapSqlParameterSource params = createParameters()
-                .addValue("username", username.value())
+        MapSqlParameterSource params = createParameters("username", username.value())
                 .addValue("email", email);
         return namedParameterJdbcTemplate.queryForObject(ACCOUNT_EXISTS, params, Boolean.class);
     }

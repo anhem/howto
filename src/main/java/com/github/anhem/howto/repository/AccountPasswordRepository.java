@@ -36,8 +36,7 @@ public class AccountPasswordRepository extends JdbcRepository {
     }
 
     public AccountPasswordId createPassword(AccountPassword accountPassword) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("accountId", accountPassword.getAccountId().value())
+        MapSqlParameterSource parameters = createParameters("accountId", accountPassword.getAccountId().value())
                 .addValue("password", accountPassword.getPassword().value())
                 .addValue("created", Timestamp.from(accountPassword.getCreated()));
         return insert(INSERT_PASSWORD, parameters, AccountPasswordId.class);

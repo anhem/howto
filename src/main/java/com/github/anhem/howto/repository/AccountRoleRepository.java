@@ -37,8 +37,7 @@ public class AccountRoleRepository extends JdbcRepository {
     }
 
     public boolean addRoleToAccount(AccountId accountId, RoleId roleId, Instant created) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("accountId", accountId.value())
+        MapSqlParameterSource parameters = createParameters("accountId", accountId.value())
                 .addValue("roleId", roleId.value())
                 .addValue("created", Timestamp.from(created));
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT_ROLE, parameters);
@@ -47,8 +46,7 @@ public class AccountRoleRepository extends JdbcRepository {
     }
 
     public boolean removeRoleFromAccount(AccountId accountId, RoleId roleId) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("accountId", accountId.value())
+        MapSqlParameterSource parameters = createParameters("accountId", accountId.value())
                 .addValue("roleId", roleId.value());
         namedParameterJdbcTemplate.update(DELETE_ACCOUNT_ROLE, parameters);
         log.info("{} removed from {}", roleId, accountId);

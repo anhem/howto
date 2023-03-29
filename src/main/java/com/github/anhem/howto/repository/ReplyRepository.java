@@ -44,8 +44,7 @@ public class ReplyRepository extends JdbcRepository {
     }
 
     public ReplyId createReply(Reply reply) {
-        MapSqlParameterSource parameters = createParameters()
-                .addValue("postId", reply.getPostId().value())
+        MapSqlParameterSource parameters = createParameters("postId", reply.getPostId().value())
                 .addValue("accountId", reply.getAccountId().value())
                 .addValue("body", reply.getBody())
                 .addValue("created", Timestamp.from(reply.getCreated()))
