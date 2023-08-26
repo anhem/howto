@@ -1,5 +1,5 @@
 INSERT INTO account(username, email, created, last_updated)
-VALUES ('moderator', 'moderator@test.com', now(), now());
+VALUES ('moderator', 'moderator@example.com', now(), now());
 
 INSERT INTO account_password(account_id, password, created)
 VALUES ((SELECT account_id FROM account WHERE username = 'moderator'),
