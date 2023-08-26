@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class IdTest {
@@ -23,9 +24,16 @@ class IdTest {
     }
 
     @Test
+    void isNewBooleanThrowsException() {
+        assertThatThrownBy(() -> new BooleanId(true).isNew()).isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("missing implementation for Boolean");
+    }
+
+    @Test
     void nonNullIsEnforcedOnAllIdClasses() {
         findIdClasses().forEach(IdTest::assertNullChecksAreEnforced);
     }
+
 
     @SuppressWarnings("rawtypes")
     private static void assertNullChecksAreEnforced(Class<? extends Id> idClass) {
@@ -51,5 +59,22 @@ class IdTest {
     private Set<Class<? extends Id>> findIdClasses() {
         Reflections reflections = new Reflections(this.getClass().getPackageName());
         return reflections.getSubTypesOf(Id.class);
+    }
+
+    private static class BooleanId implements Id<Boolean> {
+
+        private final boolean value;
+
+        private BooleanId(Boolean value) {
+            if (value == null) {
+                throw new NullPointerException("");
+            }
+            this.value = value;
+        }
+
+        @Override
+        public Boolean value() {
+            return value;
+        }
     }
 }
