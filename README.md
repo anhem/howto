@@ -10,7 +10,7 @@ project_
 
 ### Layers
 
-This project consists of four main layers.
+This project consists of four main layers and one additional layer for communicating with the rest of the world.
 
 Each layer has its own responsibility and a class from a lower layer **cannot**
 interact directly with other classes of the same layer or any layer above. This is to keep the overall structure clear,
@@ -20,6 +20,7 @@ consistent and to avoid circular dependencies.
 2. Aggregator
 3. Service
 4. Repository
+5. Client
 
 ### 1. Controller
 
@@ -67,6 +68,17 @@ Classes annotated with `@Repository` and uses `internal model` classes.
 
 This is how we interact with a database. Only what is necessary to interact with a database should exist here, meaning
 no business logic
+
+### 5. Client
+
+Classes annotated with `@Component` and uses `internal model` classes as well as their own specific classes necessary
+for communication with the outside world.
+
+Clients are used to communicate with the outside world, usually via REST calls. Objects from `internal model` classes
+are passed down to the client,
+the client then creates its own objects to communicate with some other API, the response is then translated back
+to `internal model` and returned.
+
 
 ## Running locally
 

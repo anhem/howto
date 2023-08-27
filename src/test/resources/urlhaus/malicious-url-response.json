@@ -1,0 +1,42 @@
+{
+  "query_status": "ok",
+  "id": "2707507",
+  "urlhaus_reference": "https://urlhaus.abuse.ch/url/2707507/",
+  "url": "http://localhost:8080/replaced_to_not_link_to_a_malicous_url",
+  "url_status": "online",
+  "host": "127.0.0.1",
+  "date_added": "2023-08-26 20:42:07 UTC",
+  "last_online": null,
+  "threat": "malware_download",
+  "blacklists": {
+    "spamhaus_dbl": "not listed",
+    "surbl": "not listed"
+  },
+  "reporter": "tolisec",
+  "larted": "true",
+  "takedown_time_seconds": null,
+  "tags": [
+    "elf",
+    "hajime"
+  ],
+  "payloads": [
+    {
+      "firstseen": "2023-08-26",
+      "filename": null,
+      "file_type": "elf",
+      "response_size": "80280",
+      "response_md5": "9b6c3518a91d23ed77504b5416bfb5b3",
+      "response_sha256": "a04ac6d98ad989312783d4fe3456c53730b212c79a426fb215708b6c6daa3de3",
+      "urlhaus_download": "https://urlhaus-api.abuse.ch/v1/download/a04ac6d98ad989312783d4fe3456c53730b212c79a426fb215708b6c6daa3de3/",
+      "signature": "Hajime",
+      "virustotal": {
+        "result": "43 / 60",
+        "percent": "71.67",
+        "link": "https://www.virustotal.com/gui/file/a04ac6d98ad989312783d4fe3456c53730b212c79a426fb215708b6c6daa3de3/detection/f-a04ac6d"
+      },
+      "imphash": null,
+      "ssdeep": "1536:87vbq1lGAXSEYQjbChaAU2yU23M51DjZgSQAvcYkFtZTjzBht5:8D+CAXFYQChaAUk5ljnQssL",
+      "tlsh": "6D7312E017B517CC1371A8353BED205E9128223972AE35302E97528DF957703BAB2DBE"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ package com.github.anhem.howto.controller;
 import com.github.anhem.howto.controller.model.ErrorDTO;
 import com.github.anhem.howto.exception.ForbiddenException;
 import com.github.anhem.howto.exception.NotFoundException;
+import com.github.anhem.howto.exception.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,6 +39,17 @@ public class ControllerAdvice {
                 .fieldErrors(getFieldErrors(e))
                 .build();
     }
+
+    @ExceptionHandler(value = ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDTO handleValidationException(ValidationException e, WebRequest webRequest) {
+        log.warn("Validation error while handling request: {}", webRequest);
+        return ErrorDTO.builder()
+                .errorCode(VALIDATION_ERROR)
+                .message(e.getMessage())
+                .build();
+    }
+
 
     @ExceptionHandler(value = NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
