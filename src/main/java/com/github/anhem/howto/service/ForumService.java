@@ -1,5 +1,7 @@
 package com.github.anhem.howto.service;
 
+import com.github.anhem.howto.client.urlhaus.UrlHausClient;
+import com.github.anhem.howto.exception.ValidationException;
 import com.github.anhem.howto.model.Category;
 import com.github.anhem.howto.model.Post;
 import com.github.anhem.howto.model.Reply;
@@ -9,24 +11,34 @@ import com.github.anhem.howto.model.id.ReplyId;
 import com.github.anhem.howto.repository.CategoryRepository;
 import com.github.anhem.howto.repository.PostRepository;
 import com.github.anhem.howto.repository.ReplyRepository;
+import com.linkedin.urls.Url;
+import com.linkedin.urls.detection.UrlDetector;
+import com.linkedin.urls.detection.UrlDetectorOptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ForumService {
+    public static final String MALICIOUS_URL_DETECTED = "Malicious url detected!";
     private final CategoryRepository categoryRepository;
 
     private final PostRepository postRepository;
     private final ReplyRepository replyRepository;
+    private final UrlHausClient urlHausClient;
 
-    public ForumService(CategoryRepository categoryRepository, PostRepository postRepository, ReplyRepository replyRepository) {
+    public ForumService(CategoryRepository categoryRepository, PostRepository postRepository, ReplyRepository replyRepository, UrlHausClient urlHausClient) {
         this.categoryRepository = categoryRepository;
         this.postRepository = postRepository;
         this.replyRepository = replyRepository;
+        this.urlHausClient = urlHausClient;
     }
 
     public List<Category> getCategories() {
@@ -66,13 +78,15 @@ public class ForumService {
     @Transactional
     public PostId createPost(Post post) {
         if (!post.getPostId().isNew()) {
-            throw new IllegalArgumentException("Invalid postId");
+            throw new ValidationException("Invalid postId");
         }
+        checkForMaliciousUrls(post);
         return postRepository.createPost(post);
     }
 
     @Transactional
     public Post updatePost(Post post) {
+        checkForMaliciousUrls(post);
         postRepository.updatePost(post);
         return postRepository.getPost(post.getPostId());
     }
@@ -95,11 +109,13 @@ public class ForumService {
 
     @Transactional
     public ReplyId createReply(Reply reply) {
+        checkForMaliciousUrls(reply);
         return replyRepository.createReply(reply);
     }
 
     @Transactional
     public Reply updateReply(Reply reply) {
+        checkForMaliciousUrls(reply);
         replyRepository.updateReply(reply);
         return replyRepository.getReply(reply.getReplyId());
     }
@@ -109,5 +125,27 @@ public class ForumService {
         Reply reply = replyRepository.getReply(replyId);
         replyRepository.removeReply(replyId);
         log.info("{} removed", reply);
+    }
+
+    private void checkForMaliciousUrls(Post post) {
+        checkForMaliciousUrls(detectUrls(post.getTitle(), post.getBody()));
+    }
+
+    private void checkForMaliciousUrls(Reply reply) {
+        checkForMaliciousUrls(detectUrls(reply.getBody()));
+    }
+
+    private static Set<String> detectUrls(String... string) {
+        return Arrays.stream(string)
+                .map(s -> new UrlDetector(s, UrlDetectorOptions.Default).detect())
+                .flatMap(Collection::stream)
+                .map(Url::getFullUrl)
+                .collect(Collectors.toSet());
+    }
+
+    private void checkForMaliciousUrls(Set<String> strings) {
+        if (urlHausClient.checkForMaliciousUrls(strings)) {
+            throw new ValidationException(MALICIOUS_URL_DETECTED);
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.github.anhem.howto.controller;
 import com.github.anhem.howto.controller.model.ErrorDTO;
 import com.github.anhem.howto.exception.ForbiddenException;
 import com.github.anhem.howto.exception.NotFoundException;
+import com.github.anhem.howto.exception.ValidationException;
 import com.github.anhem.howto.model.id.AccountId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ControllerAdviceTest {
+public class ControllerAdviceTest {
 
     private static final String USERNAME_FIELD = "username";
     private static final String PASSWORD_FIELD = "password";
@@ -62,6 +63,16 @@ class ControllerAdviceTest {
         List<String> passwordErrors = errorDTO.getFieldErrors().get(PASSWORD_FIELD);
         assertThat(passwordErrors).hasSize(1);
         assertThat(passwordErrors.get(0)).isEqualTo(PASSWORD_ERROR_MESSAGE_1);
+    }
+
+    @Test
+    public void handleValidationExceptionReturnsErrorDTO() {
+        String message = "errorMessage";
+        ErrorDTO errorDTO = controllerAdvice.handleValidationException(new ValidationException(message), webRequest);
+
+        assertThat(errorDTO.getErrorCode()).isEqualTo(VALIDATION_ERROR);
+        assertThat(errorDTO.getMessage()).isEqualTo(message);
+        assertThat(errorDTO.getFieldErrors()).hasSize(0);
     }
 
     @Test

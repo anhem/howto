@@ -1,18 +1,24 @@
 package com.github.anhem.howto.controller;
 
+import com.github.anhem.howto.client.urlhaus.UrlHausClient;
 import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.testutil.TestApplication;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import static com.github.anhem.howto.controller.model.ErrorCode.VALIDATION_ERROR;
+import static com.github.anhem.howto.service.ForumService.MALICIOUS_URL_DETECTED;
 import static com.github.anhem.howto.testutil.TestPopulator.populate;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 class ForumControllerIT extends TestApplication {
 
@@ -24,6 +30,10 @@ class ForumControllerIT extends TestApplication {
     private static final String CREATE_REPLY_URL = "/api/forum/replies";
     private static final String GET_REPLIES_URL = "/api/forum/posts/%d/replies";
     private static final String REPLY_URL = "/api/forum/replies/%d";
+    private static final String MALICIOUS_URL = "https://local.home.arpa/";
+
+    @MockBean
+    private UrlHausClient urlHausClient;
 
     @Test
     void categoryCrud() {
@@ -137,6 +147,80 @@ class ForumControllerIT extends TestApplication {
         deleteReply(replyId, adminJwtToken);
 
         assertAndGetReply(replyId, false);
+    }
+
+    @Test
+    void createPostWithMaliciousUrlReturnError() {
+        int categoryId = createCategory();
+        CreatePostDTO createPostDTO = populate(CreatePostDTO.class)
+                .toBuilder()
+                .categoryId(categoryId)
+                .title(MALICIOUS_URL)
+                .build();
+        when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
+
+        ResponseEntity<ErrorDTO> response = postWithToken(CREATE_POST_URL, createPostDTO, ErrorDTO.class, userJwtToken);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getErrorCode()).isEqualTo(VALIDATION_ERROR);
+        assertThat(response.getBody().getMessage()).isEqualTo(MALICIOUS_URL_DETECTED);
+    }
+
+    @Test
+    void updatePostWithMaliciousUrlReturnError() {
+        int categoryId = createCategory();
+        int postId = createPost(categoryId);
+        UpdatePostDTO updatePostDTO = populate(UpdatePostDTO.class)
+                .toBuilder()
+                .body(MALICIOUS_URL)
+                .build();
+        when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
+
+        ResponseEntity<ErrorDTO> response = putWithToken(String.format(POST_URL, postId), updatePostDTO, ErrorDTO.class, userJwtToken);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getErrorCode()).isEqualTo(VALIDATION_ERROR);
+        assertThat(response.getBody().getMessage()).isEqualTo(MALICIOUS_URL_DETECTED);
+    }
+
+    @Test
+    void createReplyWithMaliciousUrlReturnsError() {
+        int categoryId = createCategory();
+        int postId = createPost(categoryId);
+        CreateReplyDTO createReplyDTO = populate(CreateReplyDTO.class)
+                .toBuilder()
+                .postId(postId)
+                .body(MALICIOUS_URL)
+                .build();
+
+        when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
+
+        ResponseEntity<ErrorDTO> response = postWithToken(CREATE_REPLY_URL, createReplyDTO, ErrorDTO.class, userJwtToken);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getErrorCode()).isEqualTo(VALIDATION_ERROR);
+        assertThat(response.getBody().getMessage()).isEqualTo(MALICIOUS_URL_DETECTED);
+    }
+
+    @Test
+    void updateReplyWithMaliciousUrlReturnsError() {
+        int categoryId = createCategory();
+        int postId = createPost(categoryId);
+        int replyId = createReply(postId);
+        UpdateReplyDTO updateReplyDTO = populate(UpdateReplyDTO.class).toBuilder()
+                .body(MALICIOUS_URL)
+                .build();
+        when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
+
+        ResponseEntity<ErrorDTO> response = putWithToken(String.format(REPLY_URL, replyId), updateReplyDTO, ErrorDTO.class, userJwtToken);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().getErrorCode()).isEqualTo(VALIDATION_ERROR);
+        assertThat(response.getBody().getMessage()).isEqualTo(MALICIOUS_URL_DETECTED);
     }
 
     private List<CategoryDTO> getCategories() {

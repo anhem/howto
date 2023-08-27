@@ -5,6 +5,8 @@ spring:
     default: dev
   jackson:
     default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: false
 
 server:
   port: 8080
@@ -23,6 +25,9 @@ info:
 
 howto:
   jwt-secret: super-obvious-secret-1-!
+  url-haus:
+    base-url: https://urlhaus-api.abuse.ch
+    max-allowed-urls: 3
 
 ---
 
