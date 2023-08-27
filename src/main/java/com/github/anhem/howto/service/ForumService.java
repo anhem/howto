@@ -143,8 +143,8 @@ public class ForumService {
                 .collect(Collectors.toSet());
     }
 
-    private void checkForMaliciousUrls(Set<String> strings) {
-        if (urlHausClient.checkForMaliciousUrls(strings)) {
+    private void checkForMaliciousUrls(Set<String> urls) {
+        if (urlHausClient.checkForMaliciousUrls(urls)) {
             throw new ValidationException(MALICIOUS_URL_DETECTED);
         }
     }
