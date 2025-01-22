@@ -24,7 +24,7 @@ info:
   version: @version@
 
 howto:
-  jwt-secret: super-obvious-secret-1-!
+  jwt-secret: superObviousSecret0d8f64c2b3e7a8f928b7d439ab3qsdkfljh4gjkkjsdv4890KJSHJ4t9fsdnfo329045Kndmfam390245nvmslaq
   url-haus:
     base-url: https://urlhaus-api.abuse.ch
     max-allowed-urls: 3

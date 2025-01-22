@@ -38,7 +38,7 @@ public class JwtUtil {
 
     public static Boolean validateToken(JwtToken jwtToken, String jwtSecret) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwtToken.value());
+            getClaims(jwtToken, jwtSecret);
             return true;
         } catch (Exception e) {
             log.warn("Token invalid", e);
@@ -59,8 +59,9 @@ public class JwtUtil {
     private static Claims getClaims(JwtToken jwtToken, String jwtSecret) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
-                .parseClaimsJws(jwtToken.value())
-                .getBody();
+                .build()
+                .parseSignedClaims(jwtToken.value())
+                .getPayload();
     }
 
 }
