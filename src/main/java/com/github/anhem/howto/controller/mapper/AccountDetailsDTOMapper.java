@@ -13,7 +13,7 @@ public class AccountDetailsDTOMapper {
 
     public static AccountDetailsDTO mapToAccountDetailsDTO(Account account, List<RoleName> roleNames) {
         List<String> roles = roleNames.stream()
-                .map(RoleName::getValue)
+                .map(RoleName::getRole)
                 .collect(Collectors.toList());
 
         return AccountDetailsDTO.builder()

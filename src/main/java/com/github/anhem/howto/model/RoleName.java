@@ -14,7 +14,7 @@ public enum RoleName implements Id<String> {
     MODERATOR(Constants.MODERATOR),
     ADMINISTRATOR(Constants.ADMINISTRATOR);
 
-    private final String value;
+    private final String role;
 
     public static RoleName fromName(String name) {
         return Arrays.stream(RoleName.values())
@@ -23,12 +23,12 @@ public enum RoleName implements Id<String> {
                 .orElseThrow(() -> new RuntimeException(String.format("Invalid roleName %s", name)));
     }
 
-    public static RoleName fromValue(String value) {
-        String role = value.replace("ROLE_", "");
+    public static RoleName fromRole(String role) {
+        String value = role.replace("ROLE_", "");
         return Arrays.stream(RoleName.values())
-                .filter(roleName -> roleName.name().equals(role))
+                .filter(roleName -> roleName.name().equals(value))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException(String.format("Invalid value %s", value)));
+                .orElseThrow(() -> new RuntimeException(String.format("Invalid value %s", role)));
     }
 
     public static class Constants {

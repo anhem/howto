@@ -48,7 +48,7 @@ public class AuthService implements UserDetailsService {
         List<RoleName> roleNames = accountRoleRepository.getRoleNames(account.getAccountId());
 
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = roleNames.stream()
-                .map(roleName -> new SimpleGrantedAuthority(roleName.getValue()))
+                .map(roleName -> new SimpleGrantedAuthority(roleName.getRole()))
                 .toList();
 
         return new User(
@@ -87,7 +87,7 @@ public class AuthService implements UserDetailsService {
 
     private List<RoleName> getLoggedInRoleNames() {
         return getUserDetailsFromSecurityContext().getAuthorities().stream()
-                .map(grantedAuthority -> RoleName.fromValue(grantedAuthority.getAuthority()))
+                .map(grantedAuthority -> RoleName.fromRole(grantedAuthority.getAuthority()))
                 .toList();
     }
 

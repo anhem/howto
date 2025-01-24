@@ -11,7 +11,7 @@ class RoleNameTest {
 
     @Test
     public void allRoleNameValuesShouldMatchEnumNameAndPrefix() {
-        assertThat(RoleName.values()).allMatch(roleName -> String.format("ROLE_%s", roleName.name()).equals(roleName.getValue()));
+        assertThat(RoleName.values()).allMatch(roleName -> String.format("ROLE_%s", roleName.name()).equals(roleName.getRole()));
     }
 
     @Test

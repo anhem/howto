@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JwtUtilTest {
 
     public static final String JWT_SECRET = "somRandomSecret2349583495dfkljg85943jgs8e09ijg9034jfipOJAOISJ398jfrdsoiafj490tusdflkgmds9t08rgfd";
-    public static final User USER = new User("username", "password", List.of(new SimpleGrantedAuthority(RoleName.USER.getValue())));
+    public static final User USER = new User("username", "password", List.of(new SimpleGrantedAuthority(RoleName.USER.getRole())));
 
     @Test
     void canGenerateAndValidateJwtToken() {
