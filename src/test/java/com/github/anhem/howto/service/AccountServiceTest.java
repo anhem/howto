@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 import static com.github.anhem.howto.model.id.AccountPasswordId.NEW_ACCOUNT_PASSWORD_ID;
 import static com.github.anhem.howto.testutil.TestPopulator.populate;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,20 +46,6 @@ class AccountServiceTest {
     private RoleRepository roleRepository;
     @InjectMocks
     private AccountService accountService;
-
-    /*
-    alternative to annotations:
-
-    @BeforeEach
-    public void setUp() {
-        accountPasswordArgumentCaptor = ArgumentCaptor.forClass(AccountPassword.class);
-        accountRepository = mock(AccountRepository.class);
-        accountPasswordRepository = mock(AccountPasswordRepository.class);
-        accountRoleRepository = mock(AccountRoleRepository.class);
-        roleRepository = mock(RoleRepository.class);
-        accountService = new AccountService(accountRepository, accountPasswordRepository, accountRoleRepository, roleRepository);
-    }
-     */
 
     @Test
     void exceptionIsThrownWHenCreatingUserAccountWithAccountIdNotZero() {
@@ -107,7 +93,7 @@ class AccountServiceTest {
         assertThat(accountPassword.getAccountPasswordId()).isEqualTo(NEW_ACCOUNT_PASSWORD_ID);
         assertThat(accountPassword.getAccountId()).isEqualTo(accountId);
         assertThat(accountPassword.getPassword()).isEqualTo(PASSWORD);
-        assertThat(accountPassword.getCreated()).isBetween(Instant.now().minusSeconds(3), Instant.now());
+        assertThat(accountPassword.getCreated()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
 
     }
 }
