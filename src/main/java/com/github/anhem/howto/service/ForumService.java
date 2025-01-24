@@ -144,8 +144,10 @@ public class ForumService {
     }
 
     private void checkForMaliciousUrls(Set<String> urls) {
-        if (urlHausClient.checkForMaliciousUrls(urls)) {
-            throw new ValidationException(MALICIOUS_URL_DETECTED);
+        if (!urls.isEmpty()) {
+            if (urlHausClient.checkForMaliciousUrls(urls)) {
+                throw new ValidationException(MALICIOUS_URL_DETECTED);
+            }
         }
     }
 }

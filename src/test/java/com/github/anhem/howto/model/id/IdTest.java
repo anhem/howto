@@ -1,7 +1,5 @@
-package com.github.anhem.howto.model;
+package com.github.anhem.howto.model.id;
 
-import com.github.anhem.howto.model.id.AccountId;
-import com.github.anhem.howto.model.id.Id;
 import org.junit.jupiter.api.Test;
 import org.reflections.Reflections;
 
