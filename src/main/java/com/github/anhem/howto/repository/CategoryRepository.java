@@ -1,10 +1,8 @@
 package com.github.anhem.howto.repository;
 
-import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Category;
 import com.github.anhem.howto.model.id.CategoryId;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -19,7 +17,7 @@ import static com.github.anhem.howto.repository.mapper.CategoryMapper.mapToCateg
 public class CategoryRepository extends JdbcRepository {
 
     private static final String SELECT_CATEGORIES = "SELECT * FROM category";
-    private static final String SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE category_id = :categoryId";
+    private static final String SELECT_CATEGORY_BY_ID = "SELECT * FROM category WHERE category_id = :id";
     private static final String DELETE_CATEGORY = "DELETE FROM category WHERE category_id = :categoryId";
     private static final String INSERT_CATEGORY = "INSERT INTO category(name, description, created, last_updated) values(:name, :description, :created, :lastUpdated)";
     private static final String UPDATE_CATEGORY = "UPDATE category SET name = :name, description = :description, last_updated = :lastUpdated WHERE category_id = :categoryId";
@@ -33,12 +31,7 @@ public class CategoryRepository extends JdbcRepository {
     }
 
     public Category getCategory(CategoryId categoryId) {
-        try {
-            MapSqlParameterSource parameters = createParameters("categoryId", categoryId.value());
-            return namedParameterJdbcTemplate.queryForObject(SELECT_CATEGORY_BY_ID, parameters, (rs, i) -> mapToCategory(rs));
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(categoryId);
-        }
+        return findById(categoryId, SELECT_CATEGORY_BY_ID, (rs, i) -> mapToCategory(rs));
     }
 
     public CategoryId createCategory(Category category) {

@@ -1,7 +1,10 @@
 package com.github.anhem.howto.repository;
 
+import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.id.Id;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,6 +23,14 @@ public abstract class JdbcRepository {
 
     protected MapSqlParameterSource createParameters(String name, Object value) {
         return new MapSqlParameterSource().addValue(name, value);
+    }
+
+    protected <T> T findById(Id<?> id, String sql, RowMapper<T> rowMapper) {
+        try {
+            return namedParameterJdbcTemplate.queryForObject(sql, createParameters("id", id.value()), rowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException(id);
+        }
     }
 
     protected <T extends Id<Integer>> T insert(String sql, MapSqlParameterSource parameters, Class<T> returnClass) {

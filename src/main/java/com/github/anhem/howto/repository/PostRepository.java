@@ -1,11 +1,9 @@
 package com.github.anhem.howto.repository;
 
-import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Post;
 import com.github.anhem.howto.model.id.CategoryId;
 import com.github.anhem.howto.model.id.PostId;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +18,7 @@ import static com.github.anhem.howto.repository.mapper.PostMapper.mapToPost;
 public class PostRepository extends JdbcRepository {
 
     private static final String SELECT_POSTS_BY_CATEGORY_ID = "SELECT * FROM post WHERE category_id = :categoryId";
-    private static final String SELECT_POST_BY_ID = "SELECT * FROM post WHERE post_id = :postId";
+    private static final String SELECT_POST_BY_ID = "SELECT * FROM post WHERE post_id = :id";
     private static final String DELETE_POST = "DELETE FROM post WHERE post_id = :postId";
     private static final String INSERT_POST = "INSERT INTO post(category_id, account_id, title, body, created, last_updated) VALUES (:categoryId, :accountId, :title, :body, :created, :lastUpdated)";
     private static final String UPDATE_POST = "UPDATE post SET title = :title, body = :body, last_updated = :lastUpdated WHERE post_id = :postId";
@@ -35,12 +33,7 @@ public class PostRepository extends JdbcRepository {
     }
 
     public Post getPost(PostId postId) {
-        try {
-            MapSqlParameterSource parameters = createParameters("postId", postId.value());
-            return namedParameterJdbcTemplate.queryForObject(SELECT_POST_BY_ID, parameters, (rs, i) -> mapToPost(rs));
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(postId);
-        }
+        return findById(postId, SELECT_POST_BY_ID, (rs, i) -> mapToPost(rs));
     }
 
     public PostId createPost(Post post) {

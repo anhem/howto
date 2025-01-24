@@ -22,7 +22,6 @@ public class AccountRoleRepository extends JdbcRepository {
 
     private static final String SELECT_ROLES_FOR_ACCOUNT = "SELECT * FROM role r JOIN account_role ar ON r.role_id = ar.role_id WHERE ar.account_id = :accountId";
     private static final String INSERT_ACCOUNT_ROLE = "INSERT INTO account_role(account_id, role_id, created) VALUES (:accountId, :roleId, :created)";
-    private static final String DELETE_ACCOUNT_ROLE = "DELETE FROM account_role WHERE account_id = :accountId AND role_id = :roleId";
     private static final String DELETE_ACCOUNT_ROLES = "DELETE FROM account_role WHERE account_id = :accountId";
 
     protected AccountRoleRepository(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -42,14 +41,6 @@ public class AccountRoleRepository extends JdbcRepository {
                 .addValue("created", Timestamp.from(created));
         namedParameterJdbcTemplate.update(INSERT_ACCOUNT_ROLE, parameters);
         log.info("{} added to {}", roleId, accountId);
-        return true;
-    }
-
-    public boolean removeRoleFromAccount(AccountId accountId, RoleId roleId) {
-        MapSqlParameterSource parameters = createParameters("accountId", accountId.value())
-                .addValue("roleId", roleId.value());
-        namedParameterJdbcTemplate.update(DELETE_ACCOUNT_ROLE, parameters);
-        log.info("{} removed from {}", roleId, accountId);
         return true;
     }
 

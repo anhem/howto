@@ -1,11 +1,9 @@
 package com.github.anhem.howto.repository;
 
-import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Reply;
 import com.github.anhem.howto.model.id.PostId;
 import com.github.anhem.howto.model.id.ReplyId;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +18,7 @@ import static com.github.anhem.howto.repository.mapper.ReplyMapper.mapToReply;
 public class ReplyRepository extends JdbcRepository {
 
     private static final String SELECT_REPLIES_BY_POST_ID = "SELECT * FROM reply where post_id = :postId";
-    private static final String SELECT_POST_BY_ID = "SELECT * FROM reply WHERE reply_id = :replyId";
+    private static final String SELECT_POST_BY_ID = "SELECT * FROM reply WHERE reply_id = :id";
     private static final String DELETE_REPLY = "DELETE FROM reply WHERE reply_id = :replyId";
     private static final String DELETE_REPLIES = "DELETE FROM reply WHERE post_id = :postId";
     private static final String INSERT_REPLY = "INSERT INTO reply(post_id, account_id, body, created, last_updated) VALUES (:postId, :accountId, :body, :created, :lastUpdated)";
@@ -36,11 +34,7 @@ public class ReplyRepository extends JdbcRepository {
     }
 
     public Reply getReply(ReplyId replyId) {
-        try {
-            return namedParameterJdbcTemplate.queryForObject(SELECT_POST_BY_ID, createParameters("replyId", replyId.value()), (rs, i) -> mapToReply(rs));
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(replyId);
-        }
+        return findById(replyId, SELECT_POST_BY_ID, (rs, i) -> mapToReply(rs));
     }
 
     public ReplyId createReply(Reply reply) {

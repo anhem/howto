@@ -31,7 +31,9 @@ class IdTest {
 
     @Test
     void nonNullIsEnforcedOnAllIdClasses() {
-        findIdClasses().forEach(IdTest::assertNullChecksAreEnforced);
+        findIdClasses().stream()
+                .filter(clazz -> !clazz.isEnum())
+                .forEach(IdTest::assertNullChecksAreEnforced);
     }
 
 

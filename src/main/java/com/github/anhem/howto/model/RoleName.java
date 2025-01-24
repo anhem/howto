@@ -1,5 +1,6 @@
 package com.github.anhem.howto.model;
 
+import com.github.anhem.howto.model.id.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
-public enum RoleName {
+public enum RoleName implements Id<String> {
 
     USER(Constants.USER),
     MODERATOR(Constants.MODERATOR),
@@ -34,5 +35,10 @@ public enum RoleName {
         public static final String USER = "ROLE_USER";
         public static final String MODERATOR = "ROLE_MODERATOR";
         public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+    }
+
+    @Override
+    public String value() {
+        return this.name();
     }
 }

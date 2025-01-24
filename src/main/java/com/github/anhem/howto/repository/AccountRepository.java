@@ -1,11 +1,9 @@
 package com.github.anhem.howto.repository;
 
-import com.github.anhem.howto.exception.NotFoundException;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.Username;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -22,9 +20,9 @@ import static com.github.anhem.howto.repository.mapper.AccountMapper.mapToAccoun
 public class AccountRepository extends JdbcRepository {
 
     private static final String SELECT_ACCOUNTS = "SELECT * FROM account";
-    private static final String SELECT_ACCOUNT_BY_ID = "SELECT * FROM account WHERE account_id = :accountId";
+    private static final String SELECT_ACCOUNT_BY_ID = "SELECT * FROM account WHERE account_id = :id";
     private static final String SELECT_ACCOUNTS_BY_IDS = "SELECT * FROM account WHERE account_id IN(:accountIds)";
-    private static final String SELECT_ACCOUNT_BY_USERNAME = "SELECT * FROM account WHERE username = :username";
+    private static final String SELECT_ACCOUNT_BY_USERNAME = "SELECT * FROM account WHERE username = :id";
     private static final String INSERT_ACCOUNT = "INSERT INTO account(username, email, first_name, last_name, created, last_updated) values(:username, :email, :firstName, :lastName, :created, :lastUpdated)";
     private static final String DELETE_ACCOUNT = "DELETE FROM account WHERE account_id = :accountId";
     private static final String ACCOUNT_EXISTS = "SELECT EXISTS (SELECT 1 FROM account WHERE username = :username OR email =:email LIMIT 1)";
@@ -45,21 +43,11 @@ public class AccountRepository extends JdbcRepository {
     }
 
     public Account getAccount(AccountId accountId) {
-        try {
-            MapSqlParameterSource parameters = createParameters("accountId", accountId.value());
-            return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_ID, parameters, (rs, i) -> mapToAccount(rs));
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(accountId);
-        }
+        return findById(accountId, SELECT_ACCOUNT_BY_ID, (rs, i) -> mapToAccount(rs));
     }
 
     public Account getAccount(Username username) {
-        try {
-            MapSqlParameterSource parameters = createParameters("username", username.value());
-            return namedParameterJdbcTemplate.queryForObject(SELECT_ACCOUNT_BY_USERNAME, parameters, (rs, i) -> mapToAccount(rs));
-        } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(username);
-        }
+        return findById(username, SELECT_ACCOUNT_BY_USERNAME, (rs, i) -> mapToAccount(rs));
     }
 
     public void removeAccount(AccountId accountId) {
