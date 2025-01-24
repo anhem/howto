@@ -142,4 +142,4 @@ To create a new baseline:
    and then `docker compose up -d` to start a fresh database
 3. Start the java backend with the local profile active to populate the database
 4. Run `PGPASSWORD=password docker exec howto-postgres pg_dump -U howto -d howto-db > howto_db_baseline.sql` to create a new baseline
-5. Replace the existing [infoval_baseline.sql](src/test/resources/db/baseline/infoval_baseline.sql) with this new baseline
+5. Replace the existing [howto_db_baseline.sql](src/test/resources/db/baseline/howto_db_baseline.sql) with this new baseline
