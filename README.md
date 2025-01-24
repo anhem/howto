@@ -86,13 +86,24 @@ This project requires that you have a postgresql database up and running.
 
 ### Database setup
 
-```
-docker run --name howto-db -e POSTGRES_DB=howto-db -e POSTGRES_USER=howto -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:14.5
-```
+There is a docker compose file that can be used to start a postgresql database: 
 
-or run `docker-compose up -d`
+`docker compose up -d`
 
 ### Test users
+
+Login by posting the following to http://localhost:8080/api/auth/authenticate
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+The response is a message with the token. This should be used as part of the `HTTP Authorization header` using the `Bearer authentication scheme` 
+for requests that requires authentication.
+
+If you're using the swagger gui you can set the authorization header by clicking the `Authorize` button at the top of the page
 
 ```
 username: admin
@@ -112,3 +123,23 @@ password: superSecret3!
 ### Swagger
 
 http://localhost:8080/swagger-ui/index.html
+
+### Actuator
+
+* http://localhost:8080/actuator/health
+* http://localhost:8080/actuator/info
+
+### Flyway baseline
+
+To not have to run every single flyway migration each time the database is created we can create a baseline that will be used in tests and when
+running locally with docker compose.
+
+To create a new baseline:
+
+1. Temporarily remove any flyway script that would execute for the local profile by removing all files
+   in [src/main/resources/db/migration/local/](src/main/resources/db/migration/local/). We don't want these in our baseline
+2. Start an empty mysql database using the docker compose file by first executing `docker compose down` to make sure any existing database is removed
+   and then `docker compose up -d` to start a fresh database
+3. Start the java backend with the local profile active to populate the database
+4. Run `PGPASSWORD=password docker exec howto-postgres pg_dump -U howto -d howto-db > howto_db_baseline.sql` to create a new baseline
+5. Replace the existing [infoval_baseline.sql](src/test/resources/db/baseline/infoval_baseline.sql) with this new baseline

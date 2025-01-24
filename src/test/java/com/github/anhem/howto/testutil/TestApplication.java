@@ -18,6 +18,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.testcontainers.utility.MountableFile.forClasspathResource;
 
 @ActiveProfiles("integration-test")
 @ExtendWith(SpringExtension.class)
@@ -38,7 +39,9 @@ public abstract class TestApplication {
     private static final String AUTHENTICATE_URL = "/api/auth/authenticate";
 
     static final PostgreSQLContainer<?> SQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.5")
-            .withDatabaseName("howto-db-it");
+            .withDatabaseName("howto-db-it")
+            .withUsername("howto")
+            .withCopyFileToContainer(forClasspathResource("/db/baseline/howto_db_baseline.sql"), "/docker-entrypoint-initdb.d/howto_db_baseline.sql");
 
     @DynamicPropertySource
     static void registerSQLProperties(DynamicPropertyRegistry registry) {

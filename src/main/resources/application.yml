@@ -2,7 +2,7 @@ spring:
   application:
     name: howto
   profiles:
-    default: dev
+    default: local
   jackson:
     default-property-inclusion: non_null
     deserialization:
@@ -41,18 +41,19 @@ spring:
     activate:
       on-profile: integration-test
   flyway:
-    locations: classpath:/db/migration,classpath:/dev/db/migration
+    locations: classpath:/db/migration/common,classpath:/db/migration/local
 
 ---
 
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: local
   datasource:
     url: jdbc:postgresql://localhost:5432/howto-db
     hikari:
       username: howto
       password: password
   flyway:
-    locations: classpath:/db/migration,classpath:/dev/db/migration
+    locations: classpath:/db/migration/common,classpath:/db/migration/local
+    out-of-order: true
