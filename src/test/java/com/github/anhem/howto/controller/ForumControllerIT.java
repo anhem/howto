@@ -5,9 +5,9 @@ import com.github.anhem.howto.controller.model.*;
 import com.github.anhem.howto.model.id.JwtToken;
 import com.github.anhem.howto.testutil.TestApplication;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +32,7 @@ class ForumControllerIT extends TestApplication {
     private static final String REPLY_URL = "/api/forum/replies/%d";
     private static final String MALICIOUS_URL = "https://local.home.arpa/";
 
-    @MockBean
+    @MockitoBean
     private UrlHausClient urlHausClient;
 
     @Test
