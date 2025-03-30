@@ -138,7 +138,7 @@ To create a new baseline:
 
 1. Temporarily remove any flyway script that would execute for the local profile by removing all files
    in [src/main/resources/db/migration/local/](src/main/resources/db/migration/local/). We don't want these in our baseline
-2. Start an empty mysql database using the docker compose file by first executing `docker compose down` to make sure any existing database is removed
+2. Start an empty postgreSQL database using the docker compose file by first executing `docker compose down` to make sure any existing database is removed
    and then `docker compose up -d` to start a fresh database
 3. Start the java backend with the local profile active to populate the database
 4. Run `PGPASSWORD=password docker exec howto-postgres pg_dump -U howto -d howto-db > howto_db_baseline.sql` to create a new baseline
