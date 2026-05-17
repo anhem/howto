@@ -16,10 +16,6 @@ public class TestPopulator {
             .constructorStrategy()
             .build();
 
-    private static final PopulateConfig TEST = PopulateConfig.builder()
-            .clearStrategies()
-            .build();
-
     private static final PopulateFactory POPULATE_FACTORY = new PopulateFactory(POPULATE_CONFIG);
 
     public static <T> T populate(Class<T> clazz) {
