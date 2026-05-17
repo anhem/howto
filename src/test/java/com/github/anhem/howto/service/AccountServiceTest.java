@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 
 import static com.github.anhem.howto.model.id.AccountPasswordId.NEW_ACCOUNT_PASSWORD_ID;
 import static com.github.anhem.howto.testutil.TestPopulator.populate;
@@ -30,9 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
 
-    public static final Account NEW_ACCOUNT = populate(Account.class).toBuilder()
-            .accountId(AccountId.NEW_ACCOUNT_ID)
-            .build();
+    public static final Account NEW_ACCOUNT = populate(Account.class, AccountId.class, () -> AccountId.NEW_ACCOUNT_ID);
     private static final Password PASSWORD = new Password("{bcrypt}encryptedPassword");
     @Captor
     ArgumentCaptor<AccountPassword> accountPasswordArgumentCaptor;
@@ -58,10 +57,10 @@ class AccountServiceTest {
 
     @Test
     void exceptionIsThrownWhenCreatingUserAccountWithReservedUsername() {
-        Account accountWithReservedUsername = populate(Account.class).toBuilder()
-                .accountId(AccountId.NEW_ACCOUNT_ID)
-                .username(Username.UNKNOWN)
-                .build();
+        Account accountWithReservedUsername = populate(Account.class, Map.of(
+                AccountId.class, () -> AccountId.NEW_ACCOUNT_ID,
+                Username.class, () -> Username.UNKNOWN
+        ));
 
         assertThatThrownBy(() -> accountService.createUserAccount(accountWithReservedUsername, PASSWORD))
                 .isInstanceOf(IllegalArgumentException.class)

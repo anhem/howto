@@ -3,6 +3,7 @@ package com.github.anhem.howto.controller.mapper;
 import com.github.anhem.howto.controller.model.ReplyDTO;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.Reply;
+import com.github.anhem.howto.model.id.AccountId;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.Test;
 
@@ -17,9 +18,7 @@ class ReplyDTOMapperTest {
     @Test
     void mappedToDTO() {
         Account account = populate(Account.class);
-        Reply reply = populate(Reply.class).toBuilder()
-                .accountId(account.getAccountId())
-                .build();
+        Reply reply = populate(Reply.class, "accountId", AccountId.class, account::getAccountId);
 
         List<ReplyDTO> replyDTOs = mapToReplyDTOs(List.of(reply), List.of(account));
 

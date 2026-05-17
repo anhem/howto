@@ -9,10 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.github.anhem.testpopulator.config.OverrideTarget;
+
+import java.util.*;
 
 import static com.github.anhem.howto.controller.model.ErrorCode.VALIDATION_ERROR;
 import static com.github.anhem.howto.service.ForumService.MALICIOUS_URL_DETECTED;
@@ -152,11 +151,10 @@ class ForumControllerIT extends TestApplication {
     @Test
     void createPostWithMaliciousUrlReturnError() {
         int categoryId = createCategory();
-        CreatePostDTO createPostDTO = populate(CreatePostDTO.class)
-                .toBuilder()
-                .categoryId(categoryId)
-                .title(MALICIOUS_URL)
-                .build();
+        CreatePostDTO createPostDTO = populate(CreatePostDTO.class, Map.of(
+                OverrideTarget.of("categoryId", Integer.class), () -> categoryId,
+                OverrideTarget.of("title", String.class), () -> MALICIOUS_URL
+        ));
         when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
 
         ResponseEntity<ErrorDTO> response = postWithToken(CREATE_POST_URL, createPostDTO, ErrorDTO.class, userJwtToken);
@@ -171,10 +169,7 @@ class ForumControllerIT extends TestApplication {
     void updatePostWithMaliciousUrlReturnError() {
         int categoryId = createCategory();
         int postId = createPost(categoryId);
-        UpdatePostDTO updatePostDTO = populate(UpdatePostDTO.class)
-                .toBuilder()
-                .body(MALICIOUS_URL)
-                .build();
+        UpdatePostDTO updatePostDTO = populate(UpdatePostDTO.class, "body", String.class, () -> MALICIOUS_URL);
         when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
 
         ResponseEntity<ErrorDTO> response = putWithToken(String.format(POST_URL, postId), updatePostDTO, ErrorDTO.class, userJwtToken);
@@ -189,11 +184,10 @@ class ForumControllerIT extends TestApplication {
     void createReplyWithMaliciousUrlReturnsError() {
         int categoryId = createCategory();
         int postId = createPost(categoryId);
-        CreateReplyDTO createReplyDTO = populate(CreateReplyDTO.class)
-                .toBuilder()
-                .postId(postId)
-                .body(MALICIOUS_URL)
-                .build();
+        CreateReplyDTO createReplyDTO = populate(CreateReplyDTO.class, Map.of(
+                OverrideTarget.of("postId", Integer.class), () -> postId,
+                OverrideTarget.of("body", String.class), () -> MALICIOUS_URL
+        ));
 
         when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
 
@@ -210,9 +204,7 @@ class ForumControllerIT extends TestApplication {
         int categoryId = createCategory();
         int postId = createPost(categoryId);
         int replyId = createReply(postId);
-        UpdateReplyDTO updateReplyDTO = populate(UpdateReplyDTO.class).toBuilder()
-                .body(MALICIOUS_URL)
-                .build();
+        UpdateReplyDTO updateReplyDTO = populate(UpdateReplyDTO.class, "body", String.class, () -> MALICIOUS_URL);
         when(urlHausClient.checkForMaliciousUrls(Set.of(MALICIOUS_URL))).thenReturn(true);
 
         ResponseEntity<ErrorDTO> response = putWithToken(String.format(REPLY_URL, replyId), updateReplyDTO, ErrorDTO.class, userJwtToken);
@@ -278,10 +270,7 @@ class ForumControllerIT extends TestApplication {
     }
 
     private int createPost(int categoryId) {
-        CreatePostDTO createPostDTO = populate(CreatePostDTO.class)
-                .toBuilder()
-                .categoryId(categoryId)
-                .build();
+        CreatePostDTO createPostDTO = populate(CreatePostDTO.class, "categoryId", Integer.class, () -> categoryId);
         ResponseEntity<MessageDTO> response = postWithToken(CREATE_POST_URL, createPostDTO, MessageDTO.class, userJwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
@@ -337,10 +326,7 @@ class ForumControllerIT extends TestApplication {
     }
 
     private int createReply(int postId) {
-        CreateReplyDTO createReplyDTO = populate(CreateReplyDTO.class)
-                .toBuilder()
-                .postId(postId)
-                .build();
+        CreateReplyDTO createReplyDTO = populate(CreateReplyDTO.class, "postId", Integer.class, () -> postId);
         ResponseEntity<MessageDTO> response = postWithToken(String.format(CREATE_REPLY_URL, postId), createReplyDTO, MessageDTO.class, userJwtToken);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();

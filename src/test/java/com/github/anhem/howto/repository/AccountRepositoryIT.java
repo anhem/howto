@@ -5,9 +5,12 @@ import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.Username;
 import com.github.anhem.howto.testutil.TestApplication;
+import com.github.anhem.testpopulator.config.OverrideTarget;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Instant;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,11 +25,11 @@ class AccountRepositoryIT extends TestApplication {
 
     @Test
     void crd() {
-        Account account = populate(Account.class).toBuilder()
-                .accountId(AccountId.NEW_ACCOUNT_ID)
-                .email("test@example.com")
-                .lastLogin(null)
-                .build();
+        Account account = populate(Account.class, Map.of(
+                OverrideTarget.of("accountId", AccountId.class), () -> AccountId.NEW_ACCOUNT_ID,
+                OverrideTarget.of("email", String.class), () -> "test@example.com",
+                OverrideTarget.of("lastLogin", Instant.class), () -> null
+        ));
 
         AccountId accountId = accountRepository.createAccount(account);
 

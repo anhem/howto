@@ -3,6 +3,7 @@ package com.github.anhem.howto.controller.mapper;
 import com.github.anhem.howto.controller.model.PostDTO;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.Post;
+import com.github.anhem.howto.model.id.AccountId;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,14 +17,12 @@ class PostDTOMapperTest {
     @Test
     void mappedToDTO() {
         Account account = populate(Account.class);
-        Post post = populate(Post.class).toBuilder()
-                .accountId(account.getAccountId())
-                .build();
+        Post post = populate(Post.class, "accountId", AccountId.class, account::getAccountId);
 
         List<PostDTO> postDTOs = mapToPostDTOs(List.of(post), List.of(account));
 
-        assertThat(postDTOs).hasSize(1);
         assertThat(postDTOs.get(0)).hasNoNullFieldsOrProperties();
+        assertThat(postDTOs.get(0).getPostId()).isEqualTo(post.getPostId().value());
     }
 
 }

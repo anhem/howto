@@ -18,9 +18,7 @@ class AccountControllerIT extends TestApplication {
 
     @Test
     void crud() {
-        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class).toBuilder()
-                .email("integration@example.com")
-                .build();
+        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class, "email", String.class, () -> "integration@example.com");
 
         ResponseEntity<MessageDTO> createResponse = postWithToken(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class, adminJwtToken);
 
@@ -51,9 +49,7 @@ class AccountControllerIT extends TestApplication {
 
     @Test
     void userIsUnauthorized() {
-        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class).toBuilder()
-                .email("integration@example.com")
-                .build();
+        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class, "email", String.class, () -> "integration@example.com");
 
         ResponseEntity<MessageDTO> createResponse = postWithToken(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class, userJwtToken);
 
