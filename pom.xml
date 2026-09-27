@@ -116,7 +116,7 @@
         <dependency>
             <groupId>com.github.anhem</groupId>
             <artifactId>test-populator</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
