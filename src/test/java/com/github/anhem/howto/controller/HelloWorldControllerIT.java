@@ -19,11 +19,15 @@ class HelloWorldControllerIT extends TestApplication {
 
     @Test
     public void unauthenticatedCanGetHelloWorld() {
-        ResponseEntity<MessageDTO> response = testRestTemplate.getForEntity(GET_URL, MessageDTO.class);
+        var result = restTestClient.get()
+                .uri(GET_URL)
+                .exchange()
+                .expectBody(MessageDTO.class)
+                .returnResult();
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getMessage()).isEqualTo(HELLO_WORLD);
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getResponseBody()).isNotNull();
+        assertThat(result.getResponseBody().getMessage()).isEqualTo(HELLO_WORLD);
     }
 
     @Test

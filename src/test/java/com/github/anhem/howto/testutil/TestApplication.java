@@ -7,14 +7,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.springframework.test.web.servlet.client.RestTestClient;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import static com.github.anhem.howto.configuration.JwtTokenFilter.BEARER;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,6 +26,7 @@ import static org.testcontainers.utility.MountableFile.forClasspathResource;
 @ActiveProfiles("integration-test")
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
 public abstract class TestApplication {
 
     private static final String ADMIN_USERNAME = "admin";
@@ -38,7 +42,7 @@ public abstract class TestApplication {
 
     private static final String AUTHENTICATE_URL = "/api/auth/authenticate";
 
-    static final PostgreSQLContainer<?> SQL_CONTAINER = new PostgreSQLContainer<>("postgres:14.5")
+    static final PostgreSQLContainer SQL_CONTAINER = new PostgreSQLContainer("postgres:14.5")
             .withDatabaseName("howto-db-it")
             .withUsername("howto")
             .withCopyFileToContainer(forClasspathResource("/db/baseline/howto_db_baseline.sql"), "/docker-entrypoint-initdb.d/howto_db_baseline.sql");
@@ -69,27 +73,48 @@ public abstract class TestApplication {
     }
 
     @Autowired
-    protected TestRestTemplate testRestTemplate;
+    protected RestTestClient restTestClient;
 
     protected <T> ResponseEntity<T> getWithToken(String url, Class<T> responseType, JwtToken jwtToken) {
-        return testRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(withJwtToken(jwtToken)), responseType);
+        var result = restTestClient.get()
+                .uri(url)
+                .headers(headers -> headers.addAll(withJwtToken(jwtToken)))
+                .exchange()
+                .expectBody(responseType)
+                .returnResult();
+        return new ResponseEntity<>(result.getResponseBody(), result.getResponseHeaders(), result.getStatus());
     }
 
     protected <T, B> ResponseEntity<T> postWithToken(String url, B body, Class<T> responseType, JwtToken jwtToken) {
-        return testRestTemplate.exchange(url, HttpMethod.POST, withJwtToken(body, jwtToken), responseType);
+        var result = restTestClient.post()
+                .uri(url)
+                .headers(headers -> headers.addAll(withJwtToken(jwtToken)))
+                .body(body)
+                .exchange()
+                .expectBody(responseType)
+                .returnResult();
+        return new ResponseEntity<>(result.getResponseBody(), result.getResponseHeaders(), result.getStatus());
     }
 
     protected <T, B> ResponseEntity<T> putWithToken(String url, B body, Class<T> responseType, JwtToken jwtToken) {
-        return testRestTemplate.exchange(url, HttpMethod.PUT, withJwtToken(body, jwtToken), responseType);
+        var result = restTestClient.put()
+                .uri(url)
+                .headers(headers -> headers.addAll(withJwtToken(jwtToken)))
+                .body(body)
+                .exchange()
+                .expectBody(responseType)
+                .returnResult();
+        return new ResponseEntity<>(result.getResponseBody(), result.getResponseHeaders(), result.getStatus());
     }
 
     protected <T> ResponseEntity<T> deleteWithToken(String url, Class<T> responseType, JwtToken jwtToken) {
-        return testRestTemplate.exchange(url, HttpMethod.DELETE, new HttpEntity<>(withJwtToken(jwtToken)), responseType);
-    }
-
-    private <T> HttpEntity<T> withJwtToken(T body, JwtToken jwtToken) {
-        HttpHeaders httpHeaders = withJwtToken(jwtToken);
-        return new HttpEntity<>(body, httpHeaders);
+        var result = restTestClient.delete()
+                .uri(url)
+                .headers(headers -> headers.addAll(withJwtToken(jwtToken)))
+                .exchange()
+                .expectBody(responseType)
+                .returnResult();
+        return new ResponseEntity<>(result.getResponseBody(), result.getResponseHeaders(), result.getStatus());
     }
 
     private static HttpHeaders withJwtToken(JwtToken jwtToken) {
@@ -103,10 +128,15 @@ public abstract class TestApplication {
                 .username(username)
                 .password(password)
                 .build();
-        ResponseEntity<MessageDTO> response = testRestTemplate.postForEntity(AUTHENTICATE_URL, authenticateDTO, MessageDTO.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        return new JwtToken(response.getBody().getMessage());
+        var result = restTestClient.post()
+                .uri(AUTHENTICATE_URL)
+                .body(authenticateDTO)
+                .exchange()
+                .expectBody(MessageDTO.class)
+                .returnResult();
+        assertThat(result.getStatus()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getResponseBody()).isNotNull();
+        return new JwtToken(result.getResponseBody().getMessage());
     }
 
 }

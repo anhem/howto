@@ -2,10 +2,10 @@ package com.github.anhem.howto.configuration;
 
 import com.github.anhem.howto.controller.model.MessageDTO;
 import com.github.anhem.howto.testutil.TestApplication;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.fail;
 
-@Slf4j
 class SecurityConfigIT extends TestApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfigIT.class);
 
     private static final List<String> GET_URL_WHITELIST = List.of("/swagger-ui.html", "/v3/api-docs", "/v3/api-docs/swagger-config", "/api/hello-world");
     private static final List<String> PATCH_URL_WHITELIST = List.of();
@@ -68,7 +69,8 @@ class SecurityConfigIT extends TestApplication {
     private void assertGetForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
         String url = pathPattern.getPatternString();
         if (!GET_URL_WHITELIST.contains(url)) {
-            if (testRestTemplate.getForEntity(cleanUrl(url), Object.class).getStatusCode() != HttpStatus.FORBIDDEN) {
+            var result = restTestClient.get().uri(cleanUrl(url)).exchange().returnResult(Object.class);
+            if (result.getStatus() != HttpStatus.FORBIDDEN) {
                 failedEndpoints.add(String.format(VALIDATION_ERROR_MESSAGE, "GET", url, HttpStatus.FORBIDDEN, "GET_URL_WHITELIST"));
             }
         } else {
@@ -79,7 +81,8 @@ class SecurityConfigIT extends TestApplication {
     private void assertPatchForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
         String url = pathPattern.getPatternString();
         if (!PATCH_URL_WHITELIST.contains(url)) {
-            if (testRestTemplate.exchange(cleanUrl(url), HttpMethod.PATCH, null, Object.class).getStatusCode() != HttpStatus.FORBIDDEN) {
+            var result = restTestClient.patch().uri(cleanUrl(url)).exchange().returnResult(Object.class);
+            if (result.getStatus() != HttpStatus.FORBIDDEN) {
                 failedEndpoints.add(String.format(VALIDATION_ERROR_MESSAGE, "PATCH", url, HttpStatus.FORBIDDEN, "PATCH_URL_WHITELIST"));
             }
         } else {
@@ -90,7 +93,8 @@ class SecurityConfigIT extends TestApplication {
     private void assertPostForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
         String url = pathPattern.getPatternString();
         if (!POST_URL_WHITELIST.contains(url)) {
-            if (testRestTemplate.postForEntity(cleanUrl(url), MessageDTO.OK, Object.class).getStatusCode() != HttpStatus.FORBIDDEN) {
+            var result = restTestClient.post().uri(cleanUrl(url)).body(MessageDTO.OK).exchange().returnResult(Object.class);
+            if (result.getStatus() != HttpStatus.FORBIDDEN) {
                 failedEndpoints.add(String.format(VALIDATION_ERROR_MESSAGE, "POST", url, HttpStatus.FORBIDDEN, "POST_URL_WHITELIST"));
             }
         } else {
@@ -101,7 +105,8 @@ class SecurityConfigIT extends TestApplication {
     private void assertPutForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
         String url = pathPattern.getPatternString();
         if (!PUT_URL_WHITELIST.contains(url)) {
-            if (testRestTemplate.exchange(cleanUrl(url), HttpMethod.PUT, null, Object.class).getStatusCode() != HttpStatus.FORBIDDEN) {
+            var result = restTestClient.put().uri(cleanUrl(url)).exchange().returnResult(Object.class);
+            if (result.getStatus() != HttpStatus.FORBIDDEN) {
                 failedEndpoints.add(String.format(VALIDATION_ERROR_MESSAGE, "PUT", url, HttpStatus.FORBIDDEN, "PUT_URL_WHITELIST"));
             }
         } else {
@@ -112,7 +117,8 @@ class SecurityConfigIT extends TestApplication {
     private void assertDeleteForbidden(PathPattern pathPattern, List<String> failedEndpoints) {
         String url = pathPattern.getPatternString();
         if (!DELETE_URL_WHITELIST.contains(url)) {
-            if (testRestTemplate.exchange(cleanUrl(url), HttpMethod.DELETE, null, Object.class).getStatusCode() != HttpStatus.FORBIDDEN) {
+            var result = restTestClient.delete().uri(cleanUrl(url)).exchange().returnResult(Object.class);
+            if (result.getStatus() != HttpStatus.FORBIDDEN) {
                 failedEndpoints.add(String.format(VALIDATION_ERROR_MESSAGE, "DELETE", url, HttpStatus.FORBIDDEN, "DELETE_URL_WHITELIST"));
             }
         } else {

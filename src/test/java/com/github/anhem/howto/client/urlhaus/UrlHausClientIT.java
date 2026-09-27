@@ -1,5 +1,6 @@
 package com.github.anhem.howto.client.urlhaus;
 
+import com.github.anhem.howto.configuration.HowtoConfig;
 import com.github.anhem.howto.exception.ValidationException;
 import com.github.anhem.howto.testutil.TestApplication;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,15 +35,17 @@ class UrlHausClientIT extends TestApplication {
     @Value("classpath:/urlhaus/ok-url-response.json")
     private Resource okUrlResponse;
     @Autowired
-    private RestTemplate urlHausRestTemplate;
+    private RestClient.Builder urlHausRestClientBuilder;
     @Autowired
+    private HowtoConfig howtoConfig;
     private UrlHausClient urlHausClient;
     private MockRestServiceServer mockRestServiceServer;
     private URI uri;
 
     @BeforeEach
     public void setUp() throws URISyntaxException {
-        mockRestServiceServer = MockRestServiceServer.createServer(urlHausRestTemplate);
+        mockRestServiceServer = MockRestServiceServer.bindTo(urlHausRestClientBuilder).build();
+        urlHausClient = new UrlHausClient(howtoConfig, urlHausRestClientBuilder.build());
         uri = new URI("http://localhost:8080/v1/url/");
     }
 
