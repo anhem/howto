@@ -18,8 +18,10 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import com.github.anhem.howto.model.RoleName;
 
 import static com.github.anhem.howto.model.RoleName.ADMINISTRATOR;
+import static com.github.anhem.howto.model.RoleName.MODERATOR;
 import static com.github.anhem.howto.model.RoleName.USER;
 import static com.github.anhem.howto.model.id.AccountPasswordId.NEW_ACCOUNT_PASSWORD_ID;
 
@@ -64,9 +66,30 @@ public class AccountService {
     }
 
     @Transactional
+    public AccountId createModeratorAccount(Account account, Password password) {
+        Role moderatorRole = roleRepository.getRoleByName(MODERATOR);
+        return createAccount(account, password, moderatorRole);
+    }
+
+    @Transactional
     public AccountId createAdministratorAccount(Account account, Password password) {
         Role administratorRole = roleRepository.getRoleByName(ADMINISTRATOR);
         return createAccount(account, password, administratorRole);
+    }
+
+    @Transactional
+    public void updateAccountRole(AccountId accountId, RoleName roleName) {
+        if (accountId.isNew()) {
+            throw new IllegalArgumentException("invalid accountId");
+        }
+        if (roleName == null) {
+            throw new IllegalArgumentException("role is required");
+        }
+        getAccount(accountId);
+        Role role = roleRepository.getRoleByName(roleName);
+        accountRoleRepository.removeRolesFromAccount(accountId);
+        accountRoleRepository.addRoleToAccount(accountId, role.getRoleId(), Instant.now());
+        log.info("Role for account {} updated to {}", accountId, roleName);
     }
 
     @Transactional

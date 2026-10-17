@@ -5,6 +5,7 @@ import com.github.anhem.howto.controller.model.AccountDetailsDTO;
 import com.github.anhem.howto.controller.model.AccountsDTO;
 import com.github.anhem.howto.controller.model.CreateAccountDTO;
 import com.github.anhem.howto.controller.model.MessageDTO;
+import com.github.anhem.howto.controller.model.UpdateAccountRoleDTO;
 import com.github.anhem.howto.model.id.AccountId;
 import com.github.anhem.howto.model.id.Password;
 import com.github.anhem.howto.service.AccountService;
@@ -53,9 +54,19 @@ public class AccountController {
         return fromId(accountService.createUserAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
     }
 
+    @PostMapping(value = "users/moderator")
+    public MessageDTO createModeratorAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
+        return fromId(accountService.createModeratorAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
+    }
+
     @PostMapping(value = "users/administrator")
     public MessageDTO createAdministratorAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
         return fromId(accountService.createAdministratorAccount(mapToAccount(createAccountDTO), new Password(passwordEncoder.encode(createAccountDTO.getPassword()))));
+    }
+
+    @PutMapping(value = "{accountId}/role")
+    public AccountDetailsDTO updateAccountRole(@PathVariable int accountId, @Valid @RequestBody UpdateAccountRoleDTO updateAccountRoleDTO) {
+        return accountAggregator.updateAccountRole(new AccountId(accountId), updateAccountRoleDTO);
     }
 
     @DeleteMapping(value = "{accountId}")

@@ -93,6 +93,38 @@ class AccountServiceTest {
         assertThat(accountPassword.getAccountId()).isEqualTo(accountId);
         assertThat(accountPassword.getPassword()).isEqualTo(PASSWORD);
         assertThat(accountPassword.getCreated()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
+    }
 
+    @Test
+    void moderatorAccountIsCreatedWhenCallingCreateModeratorAccount() {
+        AccountId expectedAccountId = new AccountId(101);
+        Role role = populate(Role.class);
+        when(roleRepository.getRoleByName(RoleName.MODERATOR)).thenReturn(role);
+        when(accountRepository.createAccount(NEW_ACCOUNT)).thenReturn(expectedAccountId);
+
+        AccountId accountId = accountService.createModeratorAccount(NEW_ACCOUNT, PASSWORD);
+
+        assertThat(accountId).isEqualTo(expectedAccountId);
+        verify(accountRoleRepository, times(1)).addRoleToAccount(eq(expectedAccountId), eq(role.getRoleId()), any(Instant.class));
+        verify(accountPasswordRepository, times(1)).createPassword(accountPasswordArgumentCaptor.capture());
+        AccountPassword accountPassword = accountPasswordArgumentCaptor.getValue();
+        assertThat(accountPassword.getAccountPasswordId()).isEqualTo(NEW_ACCOUNT_PASSWORD_ID);
+        assertThat(accountPassword.getAccountId()).isEqualTo(accountId);
+        assertThat(accountPassword.getPassword()).isEqualTo(PASSWORD);
+        assertThat(accountPassword.getCreated()).isCloseTo(Instant.now(), within(1, ChronoUnit.SECONDS));
+    }
+
+    @Test
+    void accountRoleIsUpdatedWhenCallingUpdateAccountRole() {
+        AccountId accountId = new AccountId(1);
+        Account account = populate(Account.class, "accountId", AccountId.class, () -> accountId);
+        Role role = populate(Role.class);
+        when(accountRepository.getAccount(accountId)).thenReturn(account);
+        when(roleRepository.getRoleByName(RoleName.MODERATOR)).thenReturn(role);
+
+        accountService.updateAccountRole(accountId, RoleName.MODERATOR);
+
+        verify(accountRoleRepository, times(1)).removeRolesFromAccount(accountId);
+        verify(accountRoleRepository, times(1)).addRoleToAccount(eq(accountId), eq(role.getRoleId()), any(Instant.class));
     }
 }
