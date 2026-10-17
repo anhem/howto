@@ -1,6 +1,15 @@
 # project
 .idea
 *.iml
+.DS_Store
 
 # backend
 target
+
+# frontend
+frontend/node_modules
+frontend/dist
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

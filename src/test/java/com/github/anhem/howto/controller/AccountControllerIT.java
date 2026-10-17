@@ -12,8 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AccountControllerIT extends TestApplication {
 
     private static final String CREATE_USER_ACCOUNT_URL = "/api/accounts/users/user";
+    private static final String CREATE_MODERATOR_ACCOUNT_URL = "/api/accounts/users/moderator";
     private static final String GET_ACCOUNT_DETAILS_URL = "/api/accounts/details/%d";
     private static final String GET_ACCOUNTS_URL = "/api/accounts";
+    private static final String UPDATE_ACCOUNT_ROLE_URL = "/api/accounts/%d/role";
     public static final String DELETE_ACCOUNT_URL = "/api/accounts/%d";
 
     @Test
@@ -45,6 +47,45 @@ class AccountControllerIT extends TestApplication {
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(deleteResponse.getBody()).isNotNull();
         assertThat(deleteResponse.getBody()).isEqualTo(MessageDTO.OK);
+    }
+
+    @Test
+    void createModeratorAccount() {
+        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class, "email", String.class, () -> "moderator_test@example.com");
+
+        ResponseEntity<MessageDTO> createResponse = postWithToken(CREATE_MODERATOR_ACCOUNT_URL, createAccountDTO, MessageDTO.class, adminJwtToken);
+
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(createResponse.getBody()).isNotNull();
+
+        int accountId = Integer.parseInt(createResponse.getBody().getMessage());
+
+        ResponseEntity<AccountDetailsDTO> accountDetailsResponse = getWithToken(String.format(GET_ACCOUNT_DETAILS_URL, accountId), AccountDetailsDTO.class, adminJwtToken);
+        assertThat(accountDetailsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(accountDetailsResponse.getBody()).isNotNull();
+        assertThat(accountDetailsResponse.getBody().getRoles()).contains("ROLE_MODERATOR");
+
+        deleteWithToken(String.format(DELETE_ACCOUNT_URL, accountId), MessageDTO.class, adminJwtToken);
+    }
+
+    @Test
+    void updateAccountRole() {
+        CreateAccountDTO createAccountDTO = populate(CreateAccountDTO.class, "email", String.class, () -> "role_change@example.com");
+
+        ResponseEntity<MessageDTO> createResponse = postWithToken(CREATE_USER_ACCOUNT_URL, createAccountDTO, MessageDTO.class, adminJwtToken);
+        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        int accountId = Integer.parseInt(createResponse.getBody().getMessage());
+
+        UpdateAccountRoleDTO updateRoleDTO = UpdateAccountRoleDTO.builder()
+                .role(com.github.anhem.howto.model.RoleName.MODERATOR)
+                .build();
+
+        ResponseEntity<AccountDetailsDTO> updateResponse = putWithToken(String.format(UPDATE_ACCOUNT_ROLE_URL, accountId), updateRoleDTO, AccountDetailsDTO.class, adminJwtToken);
+        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(updateResponse.getBody()).isNotNull();
+        assertThat(updateResponse.getBody().getRoles()).containsExactly("ROLE_MODERATOR");
+
+        deleteWithToken(String.format(DELETE_ACCOUNT_URL, accountId), MessageDTO.class, adminJwtToken);
     }
 
     @Test

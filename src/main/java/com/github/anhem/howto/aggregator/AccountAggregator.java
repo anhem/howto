@@ -1,6 +1,7 @@
 package com.github.anhem.howto.aggregator;
 
 import com.github.anhem.howto.controller.model.AccountDetailsDTO;
+import com.github.anhem.howto.controller.model.UpdateAccountRoleDTO;
 import com.github.anhem.howto.model.Account;
 import com.github.anhem.howto.model.RoleName;
 import com.github.anhem.howto.model.id.AccountId;
@@ -27,5 +28,10 @@ public class AccountAggregator {
         Account account = accountService.getAccount(accountId);
         List<RoleName> roleNames = accountRoleRepository.getRoleNames(accountId);
         return mapToAccountDetailsDTO(account, roleNames);
+    }
+
+    public AccountDetailsDTO updateAccountRole(AccountId accountId, UpdateAccountRoleDTO updateAccountRoleDTO) {
+        accountService.updateAccountRole(accountId, updateAccountRoleDTO.getRole());
+        return getAccountDetails(accountId);
     }
 }
